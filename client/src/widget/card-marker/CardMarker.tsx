@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import { AudioPlayer } from "../player/AudioPlayer";
 
 const CardMarker = () => {
   const attraction = {
@@ -22,6 +23,7 @@ const CardMarker = () => {
           <Text style={styles.rating}>★ {attraction.rating}</Text>
         </View>
       </View>
+      <AudioPlayer audioSource={require("../../../assets/audio/test.mp3")} />
     </View>
   );
 };
