@@ -22,10 +22,7 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="place/[id]"
-          options={{ headerShown: true, title: "Place" }}
-        />
+        <Stack.Screen name="place/[id]" options={{ headerShown: true, title: 'Place' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
