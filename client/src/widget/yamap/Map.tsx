@@ -1,10 +1,48 @@
 import React, { useState, useRef } from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Platform, ViewStyle } from "react-native";
-import YaMap from "react-native-yamap";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Platform,
+  ViewStyle,
+  Modal,
+} from "react-native";
+import YaMap, { Marker } from "react-native-yamap";
+import CardMarker from "../card-marker/CardMarker";
+
+type Card = {
+  id: number;
+  imageUrl: string;
+  name: string;
+  description: string;
+  rating: number;
+  location: string;
+  lat: number;
+  lon: number;
+};
 
 const Map = () => {
   const [zoomLevel, setZoomLevel] = useState(10);
   const mapRef = useRef<any>(null);
+
+  const [isModalVisible, setIsModalVisible] = useState(false); // Состояние для отображения модального окна
+  const [currentPlace, setCuurentId] = useState<Card | null>(null); // Состояние для отображения модального окна
+  const [selectedPlace, setSelectedPlace] = useState<any>(null); // Состояние для выбранного места
+
+  const places: Card[] = [
+    {
+      id: 1,
+      lat: 55.921498,
+      lon: 36.845375,
+      name: "Воскресенский Ново-Иерусалимский монастырь",
+      imageUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSysw2H5YRT87tLQKffR8Lw0TYCORsKPV2EiA&ss",
+      description: "Основан в 1656 году святейшим патриархом Никоном",
+      rating: 5,
+      location: "Истра, Россия",
+    },
+  ];
 
   const increaseZoom = () => {
     if (mapRef.current && zoomLevel < 18) {
@@ -22,6 +60,11 @@ const Map = () => {
     }
   };
 
+  const handleMarkerPress = (place: any) => {
+    setSelectedPlace(place);
+    setIsModalVisible(true); // Открываем модальное окно
+  };
+
   return (
     <View style={styles.container}>
       <YaMap
@@ -32,8 +75,54 @@ const Map = () => {
           zoom: zoomLevel,
         }}
         showUserPosition={true}
-        style={styles.map} // Используем обновленный стиль
-      />
+        style={styles.map}
+      >
+        {places.map((place, index) => (
+          <Marker
+            key={index}
+            point={{ lat: place.lat, lon: place.lon }}
+            source={require("../../../assets/marker-icon.png")} // Иконка маркера
+            scale={0.5} // Масштабирование иконки
+            onPress={() => {
+              handleMarkerPress(place);
+
+              setCuurentId(place);
+            }} // Открытие модального окна при клике на маркер
+          />
+        ))}
+      </YaMap>
+      {/* Модальное окно с информацией о месте */}
+      {selectedPlace && (
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => setIsModalVisible(false)} // Закрытие модального окна
+        >
+          <View style={styles.modalBackground}>
+            <CardMarker
+              imageUrl={currentPlace?.imageUrl || ""}
+              name={currentPlace?.name || ""}
+              description={currentPlace?.description || ""}
+              rating={currentPlace?.rating || 0}
+              location={currentPlace?.location || ""}
+              setIsModalVisible={setIsModalVisible}
+            />
+            {/* <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>{selectedPlace.title}</Text>
+              <Text style={styles.modalDescription}>
+                {selectedPlace.description}
+              </Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setIsModalVisible(false)} // Закрытие модального окна
+              >
+                <Text style={styles.closeButtonText}>Закрыть</Text>
+              </TouchableOpacity>
+            </View> */}
+          </View>
+        </Modal>
+      )}
       <View style={styles.zoomControls}>
         <TouchableOpacity style={styles.zoomButton} onPress={increaseZoom}>
           <Text style={styles.zoomText}>+</Text>
@@ -47,7 +136,7 @@ const Map = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     flex: 1,
     justifyContent: "center", // Выравниваем содержимое по центру
     alignItems: "center", // Выравниваем содержимое по горизонтали
@@ -64,7 +153,7 @@ const styles = StyleSheet.create({
     default: {
       width: "100%",
       height: "100%", // Резервный вариант, если не удается определить платформу
-    }
+    },
   }) as ViewStyle, // Указываем тип ViewStyle для предотвращения ошибки
   zoomControls: {
     position: "absolute",
@@ -89,6 +178,42 @@ const styles = StyleSheet.create({
   zoomText: {
     color: "#fff",
     fontSize: 20,
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Затемнение фона
+  },
+  modalContent: {
+    width: 400,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 5, // Тень для модального окна
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#333", // Цвет заголовка
+  },
+  modalDescription: {
+    fontSize: 14,
+    marginBottom: 20,
+    color: "#666", // Цвет описания
+  },
+  closeButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 
