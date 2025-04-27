@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
 
 import { MapPlaceholder } from "@/features/map/ui";
 import { ThemedView } from "@/shared/ui/ThemedView";
@@ -14,10 +14,9 @@ export function MapPage() {
   };
 
   return (
-    <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Hello World</Text>
+    <SafeAreaView style={{ flex: 1 }}>
       <Map />
       {/* <MapPlaceholder onPlacePress={handlePlacePress} /> */}
-    </ThemedView>
+    </SafeAreaView>
   );
 }
