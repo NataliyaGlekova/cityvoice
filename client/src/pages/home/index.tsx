@@ -1,9 +1,9 @@
-import { useRouter } from 'expo-router';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { useRouter } from "expo-router";
+import { View, Text, TouchableOpacity } from "react-native";
 
-import { MapPlaceholder } from '@/features/map/ui';
-import { ThemedView } from '@/shared/ui/ThemedView';
-import { ThemedText } from '@/shared/ui/ThemedText';
+import { MapPlaceholder } from "@/features/map/ui";
+import { ThemedView } from "@/shared/ui/ThemedView";
+import { ThemedText } from "@/shared/ui/ThemedText";
 
 export function HomePage() {
   const router = useRouter();
