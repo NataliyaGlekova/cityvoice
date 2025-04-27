@@ -6,9 +6,13 @@ import { Platform, View } from "react-native";
 import { Colors } from "@/shared/styles/Colors";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { HapticTab, IconSymbol, TabBarBackground } from "@/shared/ui";
+import { useEffect, useRef } from "react";
+import YaMap from "react-native-yamap";
+import { useYaMapInit } from "@/shared/hooks/useYaMapInit";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  useYaMapInit();
 
   return (
     <View style={{ flex: 1 }}>
