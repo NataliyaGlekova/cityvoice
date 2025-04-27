@@ -1895,7 +1895,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNYamap (4.8.3):
+    - React
+    - YandexMapsMobile (= 4.8.0-full)
   - SocketRocket (0.7.1)
+  - YandexMapsMobile (4.8.0-full)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1986,11 +1990,13 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNYamap (from `../node_modules/react-native-yamap`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
     - SocketRocket
+    - YandexMapsMobile
 
 EXTERNAL SOURCES:
   boost:
@@ -2164,6 +2170,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNYamap:
+    :path: "../node_modules/react-native-yamap"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -2253,7 +2261,9 @@ SPEC CHECKSUMS:
   RNGestureHandler: fffddeb8af59709c6d8de11b6461a6af63cad532
   RNReanimated: 2e5069649cbab2c946652d3b97589b2ae0526220
   RNScreens: 362f4c861dd155f898908d5035d97b07a3f1a9d1
+  RNYamap: e9e022763db4b546333d68af89f93d3313d028dd
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  YandexMapsMobile: 576340ead47bb112b6387eac1e605cfe7565c162
   Yoga: feb4910aba9742cfedc059e2b2902e22ffe9954a
 
 PODFILE CHECKSUM: ff14bd603b46665427d80b9713788a74f19f4e66

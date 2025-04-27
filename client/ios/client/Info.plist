@@ -75,5 +75,9 @@
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Мы используем ваше местоположение для отображения карт.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Нужно для корректной работы карты.</string>
   </dict>
 </plist>
