@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   map: Platform.select({
     ios: {
       width: "100%",
-      height: 750, // Устанавливаем фиксированную высоту для iOS
+      height: 770, // Устанавливаем фиксированную высоту для iOS
     },
     android: {
       width: "100%",
