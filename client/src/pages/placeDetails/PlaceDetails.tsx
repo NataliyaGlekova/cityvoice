@@ -1,67 +1,77 @@
-// screens/PlaceDetails.tsx
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, StyleSheet, Button, ScrollView } from "react-native";
+import { useRoute, useNavigation } from '@react-navigation/native';
+import placesData from "../../../assets/places.json"; // Импорт данных о местах
+
+// Типизация данных для мест
+type Place = {
+  id: number;
+  imageUrl: string;
+  name: string;
+  description: string;
+  rating: number;
+  location: string;
+  lat: number;
+  lon: number;
+};
 
 export function PlaceDetails() {
-  const navigation = useNavigation(); // Хук для навигации
-  const route = useRoute(); // Хук для доступа к параметрам маршрута
-  const { placeId } = route.params;
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { placeId } = route.params as { placeId: number };
 
-  const place = placesData.find((p) => p.id === placeId);
+  const [place, setPlace] = useState<Place | undefined>(undefined);
 
-  if (!place) return null;
+  useEffect(() => {
+    // Найдем место по ID
+    const foundPlace = placesData.find((p) => p.id === placeId);
+    setPlace(foundPlace);
+  }, [placeId]);
+
+  if (!place) {
+    return <Text>Загрузка...</Text>;
+  }
 
   return (
-    <View style={styles.container}>
-      {/* Кнопка назад */}
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Text style={styles.backText}>← Назад</Text>
-      </TouchableOpacity>
-      
+    <ScrollView contentContainerStyle={styles.container}>
       <Image source={{ uri: place.imageUrl }} style={styles.image} />
       <Text style={styles.title}>{place.name}</Text>
       <Text style={styles.location}>{place.location}</Text>
       <Text style={styles.rating}>★ {place.rating}</Text>
       <Text style={styles.description}>{place.description}</Text>
-    </View>
+
+      <Button title="Назад" onPress={() => navigation.goBack()} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    flex: 1,
-  },
-  backButton: {
-    marginBottom: 20,
-  },
-  backText: {
-    fontSize: 18,
-    color: 'blue',
   },
   image: {
-    width: '100%',
-    height: 300,
+    width: "100%",
+    height: 200,
     borderRadius: 10,
+    marginBottom: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 8,
+    fontWeight: "bold",
+    marginBottom: 8,
   },
   location: {
-    fontSize: 18,
-    color: '#666',
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 8,
   },
   rating: {
     fontSize: 18,
-    color: '#FFD700',
-    marginVertical: 4,
+    color: "#FFD700",
+    marginBottom: 8,
   },
   description: {
     fontSize: 16,
-    color: '#333',
-    marginTop: 12,
+    marginBottom: 16,
   },
 });
