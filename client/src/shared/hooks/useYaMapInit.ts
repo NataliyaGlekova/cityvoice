@@ -16,3 +16,8 @@ export function useYaMapInit() {
     };
   }, []);
 }
+
+// export function useYaMapInit() {
+//   console.log("Yandex Maps инициализация пропущена (режим разработки)");
+//   // Ничего не делаем в заглушке
+// }
