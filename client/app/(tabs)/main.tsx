@@ -1,11 +1,5 @@
+import { PlacesList } from '../../src/widget/places-list/PlacesList';
 
-import MainPage from "@/pages/main";
-import { View } from "react-native";
-
-export default function MainScreen() {
-  return (
-    <View style={{ flex: 1 }}>
-      <MainPage />
-    </View>
-  );
+export default function Main() {
+  return <PlacesList />;
 }
