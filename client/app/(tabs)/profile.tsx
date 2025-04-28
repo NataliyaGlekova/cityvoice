@@ -1,5 +1,10 @@
-import { ProfilePage } from '@/pages/profile';
+import { ProfilePage } from "@/pages/profile";
+import { View } from "react-native";
 
 export default function ProfileScreen() {
-  return <ProfilePage />;
+  return (
+    <View style={{ flex: 1 }}>
+      <ProfilePage />;
+    </View>
+  );
 }

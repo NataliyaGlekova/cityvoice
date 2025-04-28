@@ -1,35 +1,48 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { AudioPlayer } from "../player/AudioPlayer";
 
-const CardMarker = () => {
-  const attraction = {
-    name: "Истра",
-    description:
-      "Знаменитая металлическая башня в Париже, символ Франции. Построена в 1889 году как входная арка для Всемирной выставки. Высота составляет 330 метров.",
-    imageUrl: "https://podmoskoviegid.ru/wp-content/uploads/2022/11/1-1.jpg",
-    rating: 4.8,
-    location: "Истра, Россия",
-  };
+export type CardMarkerProps = {
+  imageUrl: string;
+  name: string;
+  description: string;
+  rating: number;
+  location: string;
+  setIsModalVisible: (value: boolean) => void;
+} | null;
+
+const CardMarker = (props: CardMarkerProps) => {
+
+  if (!props) return null;
+  const { imageUrl, name, description, rating, location, setIsModalVisible } =
+    props;
 
   return (
     <View style={styles.card}>
-      <Image source={{ uri: attraction.imageUrl }} style={styles.image} />
+      <Image source={{ uri: imageUrl }} style={styles.image} />
       <View style={styles.content}>
-        <Text style={styles.title}>{attraction.name}</Text>
-        <Text style={styles.location}>{attraction.location}</Text>
-        <Text style={styles.description}>{attraction.description}</Text>
+        <Text style={styles.title}>{name}</Text>
+        <Text style={styles.location}>{location}</Text>
+        <Text style={styles.description}>{description}</Text>
         <View style={styles.ratingContainer}>
-          <Text style={styles.rating}>★ {attraction.rating}</Text>
+          <Text style={styles.rating}>★ {rating}</Text>
         </View>
       </View>
       <AudioPlayer audioSource={require("../../../assets/audio/test.mp3")} />
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => setIsModalVisible(false)} // Закрытие модального окна
+      >
+        <Text style={styles.closeButtonText}>Закрыть</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
+    width: 380,
+    height: 600,
     backgroundColor: "#fff",
     borderRadius: 10,
     shadowColor: "#000",
@@ -71,6 +84,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#FFD700",
     fontWeight: "bold",
+  },
+  closeButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: "absolute",
+    bottom: 20,
+    left: 10,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 

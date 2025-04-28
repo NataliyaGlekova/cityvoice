@@ -12,7 +12,7 @@ const CardMarkerScreen = () => {
           height: 60,
         }}
       ></View>
-      <CardMarker />
+      {/* <CardMarker /> */}
       <CommentsWidget />
     </ScrollView>
   );
