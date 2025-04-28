@@ -14,9 +14,9 @@ export function MapPage() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <Map />
       {/* <MapPlaceholder onPlacePress={handlePlacePress} /> */}
-    </SafeAreaView>
+    </View>
   );
 }
