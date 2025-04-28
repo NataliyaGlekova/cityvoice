@@ -7,10 +7,13 @@ import {
   Platform,
   ViewStyle,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import YaMap, { Marker } from "react-native-yamap";
 import CardMarker from "../card-marker/CardMarker";
 import placesData from "../../../assets/places.json";
+import { PlaceT } from "@/entities/place/model/shema";
+import { useAppSelector } from "@/shared/hooks/hooks";
 
 type Card = {
   id: number;
@@ -26,12 +29,11 @@ type Card = {
 const Map = () => {
   const [zoomLevel, setZoomLevel] = useState(10);
   const mapRef = useRef<any>(null);
+  const places = useAppSelector((state) => state.markers.places);
 
   const [isModalVisible, setIsModalVisible] = useState(false); // Состояние для отображения модального окна
   const [currentPlace, setCuurentId] = useState<Card | null>(null); // Состояние для отображения модального окна
   const [selectedPlace, setSelectedPlace] = useState<any>(null); // Состояние для выбранного места
-
-  const places: Card[] = placesData;
 
   const increaseZoom = () => {
     if (mapRef.current && zoomLevel < 18) {
@@ -53,7 +55,7 @@ const Map = () => {
     setSelectedPlace(place);
     setIsModalVisible(true); // Открываем модальное окно
   };
-
+  if (!places) return <ActivityIndicator />;
   return (
     <View style={styles.container}>
       <YaMap
