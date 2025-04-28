@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -14,6 +14,8 @@ import CardMarker from "../card-marker/CardMarker";
 import placesData from "../../../assets/places.json";
 import { PlaceT } from "@/entities/place/model/shema";
 import { useAppSelector } from "@/shared/hooks/hooks";
+
+import Geolocation from "@react-native-community/geolocation";
 
 type Card = {
   id: number;
@@ -35,6 +37,11 @@ const Map = () => {
   const [currentPlace, setCuurentId] = useState<Card | null>(null); // Состояние для отображения модального окна
   const [selectedPlace, setSelectedPlace] = useState<any>(null); // Состояние для выбранного места
 
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
+
   const increaseZoom = () => {
     if (mapRef.current && zoomLevel < 18) {
       const newZoom = zoomLevel + 1;
@@ -55,17 +62,54 @@ const Map = () => {
     setSelectedPlace(place);
     setIsModalVisible(true); // Открываем модальное окно
   };
+
+  useEffect(() => {
+    // Получаем геолокацию пользователя с флагом для принудительного использования актуальных данных
+    Geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log("Полученные координаты: ", latitude, longitude); // Логируем координаты
+        setUserLocation({ lat: latitude, lon: longitude });
+      },
+      (error) => {
+        console.log("Ошибка получения геолокации: ", error);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 } // maximumAge: 0 для актуальных данных
+    );
+
+    // Отслеживание местоположения в реальном времени
+    const watchId = Geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log("Текущие координаты: ", latitude, longitude); // Логируем координаты
+        setUserLocation({ lat: latitude, lon: longitude });
+      },
+      (error) => {
+        console.log("Ошибка отслеживания местоположения: ", error);
+      },
+      { enableHighAccuracy: true, distanceFilter: 10 }
+    );
+
+    // Очистка отслеживания при размонтировании компонента
+    return () => {
+      Geolocation.clearWatch(watchId);
+    };
+  }, []);
+
   if (!places) return <ActivityIndicator />;
   return (
     <View style={styles.container}>
       <YaMap
         ref={mapRef}
         initialRegion={{
-          lat: 55.91421,
-          lon: 36.859635,
+          lat: userLocation?.lat || 55.91421,
+          lon: userLocation?.lon || 36.859635,
           zoom: zoomLevel,
         }}
         showUserPosition={true}
+        followUser={true}
+        userLocationIcon={require("../../../assets/navigation.png")} // Иконка для отображения позиции пользователя
+        userLocationIconScale={0.3} // Масштабирование иконки
         style={styles.map}
       >
         {places.map((place, index) => (
@@ -123,7 +167,7 @@ const styles = StyleSheet.create({
   map: Platform.select({
     ios: {
       width: "100%",
-      height: 750, // Устанавливаем фиксированную высоту для iOS
+      height: 770, // Устанавливаем фиксированную высоту для iOS
     },
     android: {
       width: "100%",
