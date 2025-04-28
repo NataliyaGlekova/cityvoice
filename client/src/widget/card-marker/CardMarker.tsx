@@ -12,14 +12,7 @@ export type CardMarkerProps = {
 } | null;
 
 const CardMarker = (props: CardMarkerProps) => {
-  // const attraction = {
-  //   name: "Истра",
-  //   description:
-  //     "Знаменитая металлическая башня в Париже, символ Франции. Построена в 1889 году как входная арка для Всемирной выставки. Высота составляет 330 метров.",
-  //   imageUrl: "https://podmoskoviegid.ru/wp-content/uploads/2022/11/1-1.jpg",
-  //   rating: 4.8,
-  //   location: "Истра, Россия",
-  // };
+
   if (!props) return null;
   const { imageUrl, name, description, rating, location, setIsModalVisible } =
     props;
