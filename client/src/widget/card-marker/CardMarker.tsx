@@ -1,8 +1,11 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { AudioPlayer } from "../player/AudioPlayer";
+import { router, useLocalSearchParams } from "expo-router";
+import { useAppDispatch } from "@/shared/hooks/hooks";
 
 export type CardMarkerProps = {
+  id: number;
   imageUrl: string;
   name: string;
   description: string;
@@ -16,6 +19,7 @@ export type CardMarkerProps = {
 const CardMarker = (props: CardMarkerProps) => {
   if (!props) return null;
   const {
+    id,
     imageUrl,
     name,
     description,
@@ -25,6 +29,11 @@ const CardMarker = (props: CardMarkerProps) => {
     setIsModalVisible,
     onBuildRoute,
   } = props;
+
+  const handlePlacePress = (id: number) => {
+    console.log("Navigating to /place/", id);
+    router.push(`/place/${id}`);
+  };
 
   return (
     <View style={styles.card}>
@@ -47,13 +56,22 @@ const CardMarker = (props: CardMarkerProps) => {
           setIsModalVisible(false);
         }}
       >
-        <Text style={styles.buildRouteButtonText}>Построить маршрут</Text>
+        <Text style={styles.buildRouteButtonText}>Маршрут</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.closeButton}
         onPress={() => setIsModalVisible(false)}
       >
-        <Text style={styles.closeButtonText}>Закрыть</Text>
+        <Text style={styles.routeButtonText}>Закрыть</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.routeButton}
+        onPress={() => {
+          handlePlacePress(id);
+          setIsModalVisible(false);
+        }}
+      >
+        <Text style={styles.closeButtonText}>Подробнее</Text>
       </TouchableOpacity>
     </View>
   );
@@ -105,19 +123,6 @@ const styles = StyleSheet.create({
     color: "#FFD700",
     fontWeight: "bold",
   },
-  buildRouteButton: {
-    backgroundColor: "green",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    position: "absolute",
-    bottom: 20,
-    left: 120,
-  },
-  buildRouteButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
   closeButton: {
     backgroundColor: "#007BFF",
     paddingVertical: 10,
@@ -128,6 +133,32 @@ const styles = StyleSheet.create({
     left: 10,
   },
   closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  buildRouteButton: {
+    backgroundColor: "#2196f3", // Более насыщенный синий оттенок
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: "absolute",
+    bottom: 20,
+    right: 15, // Переносим вправо
+  },
+  buildRouteButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  routeButton: {
+    backgroundColor: "#00bcd4", // Яркий аквамариновый оттенок
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: "absolute",
+    bottom: 20,
+    left: 120, // Центральное положение слева направо
+  },
+  routeButtonText: {
     color: "#fff",
     fontSize: 16,
   },
