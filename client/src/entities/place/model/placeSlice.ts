@@ -2,10 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { PlaceSliceT } from "./shema";
 import { fetchPlaces } from "./placeThunks";
 
-
-
 const initialState: PlaceSliceT = {
-  places: null,
+  places: [],
   loading: false,
   error: null,
 };
@@ -25,12 +23,10 @@ export const placeSlice = createSlice({
       state.error = null;
     });
     builder.addCase(fetchPlaces.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Failed to fetch places";
-      },
-    );
+      state.loading = false;
+      state.error = action.error.message || "Failed to fetch places";
+    });
   },
 });
-
 
 export default placeSlice.reducer;

@@ -13,6 +13,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { Provider } from "react-redux";
 import { store } from "../src/shared/store";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -22,13 +23,26 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          {/* <Stack.Screen name="place/[id]" options={{ headerShown: true, title: 'Place' }} /> */}
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack
+            screenOptions={{
+              gestureEnabled: true, // Включаем жесты смахивания
+              headerBackTitleVisible: false, // Скрываем текст рядом со стрелкой назад
+              // headerBackTitle: '', // Скрываем текст рядом со стрелкой назад
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="place/[id]"
+              options={{ title: "Place Details" }}
+            />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </GestureHandlerRootView>
     </Provider>
   );
 }
