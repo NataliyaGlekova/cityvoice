@@ -1,10 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Image, Button, ActivityIndicator } from 'react-native';
-import { router } from 'expo-router';
-import { useAppSelector, useAppDispatch } from '@/shared/hooks/hooks';
-import { fetchPlaces } from '@/entities/place/model/placeThunks';
-import { Place } from '@/entities/place/model/types';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+  Image,
+  Button,
+  ActivityIndicator,
+} from "react-native";
+import { router } from "expo-router";
+import { useAppSelector, useAppDispatch } from "@/shared/hooks/hooks";
+import { fetchPlaces } from "@/entities/place/model/placeThunks";
+import { Place } from "@/entities/place/model/types";
+import { setActivePlace } from "@/entities/place/model/placeSlice";
+import { MaterialIcons } from "@expo/vector-icons"; // ← импорт иконок
+import { ScrollView } from "react-native-gesture-handler";
 
 export function PlacesList() {
   const dispatch = useAppDispatch();
@@ -32,12 +43,10 @@ export function PlacesList() {
     setIsAscending((prev) => !prev);
   };
 
-  // Навигация к странице места
-  const handlePlacePress = (placeId: string) => {
-    console.log('Navigating to /place/', placeId);
-    router.push(`/place/${placeId}`);
+  const handlePlacePress = (place: Place) => {
+    dispatch(setActivePlace(place));
+    router.push(`/place/${place.id}`);
   };
-
 
   // Обработка пустого списка
   if (!places || places.length === 0) {
@@ -50,16 +59,25 @@ export function PlacesList() {
 
   return (
     <ScrollView style={{ flex: 1 }}>
-      <View style= {{height: 70}}/>
-      <Button
-        title={`Сортировать по рейтингу: ${isAscending ? 'По возрастанию' : 'По убыванию'}`}
-        onPress={toggleSortOrder}
-      />
+      <View style={{ height: 70 }} />
+      <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
+        <MaterialIcons
+          name={isAscending ? "arrow-upward" : "arrow-downward"}
+          size={20}
+          color="#000"
+        />
+        <Text style={styles.sortText}>
+          Сортировка: {isAscending ? "по возрастанию" : "по убыванию"}
+        </Text>
+      </TouchableOpacity>
       <FlatList
         data={sortedPlaces}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card} onPress={() => handlePlacePress(item.id)}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => handlePlacePress(item)}
+          >
             <Image source={{ uri: item.imageUrl }} style={styles.image} />
             <View style={styles.content}>
               <Text style={styles.title}>{item.name}</Text>
@@ -70,23 +88,40 @@ export function PlacesList() {
         )}
         contentContainerStyle={styles.listContent}
       />
-      <View style= {{height: 70}}/>
+      <View style={{ height: 70 }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  sortButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    margin: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: "#f2f2f2",
+    borderRadius: 8,
+  },
+  sortText: {
+    marginLeft: 6,
+    color: "#000",
+    fontSize: 14,
+    fontWeight: "500",
+  },
   listContent: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginBottom: 16,
     elevation: 3,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   image: {
     width: 100,
@@ -99,27 +134,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   location: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 4,
   },
   rating: {
     fontSize: 16,
-    color: '#FFD700',
+    color: "#FFD700",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 16,
   },
   errorText: {
     fontSize: 16,
-    color: 'red',
+    color: "red",
     marginBottom: 16,
   },
 });
