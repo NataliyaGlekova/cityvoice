@@ -1,25 +1,18 @@
 // src/pages/placeDetails/PlaceDetails.tsx
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text, Image, StyleSheet, Button } from "react-native";
-import { useLocalSearchParams, router } from "expo-router"; // Импорт expo-router
-import placesData from "../../../assets/places.json";
-import CommentsWidget from "@/widget/comments-widget/CommentsWidget";
-import { PlaceT } from "@/entities/place/model/shema";
+import React from 'react';
+import { ScrollView, Text, Image, StyleSheet, Button, View } from 'react-native';
+import { useAppSelector } from '@/shared/hooks/hooks';
+import { router } from 'expo-router';
 
-export function PlaceDetails() {
-  const { id } = useLocalSearchParams(); // Получаем id из URL
-  const placeId = Number(id); // Преобразуем строку в число
-
-  const [place, setPlace] = useState<PlaceT | undefined>(undefined);
-
-  useEffect(() => {
-    console.log("Received placeId:", placeId); // Для отладки
-    const foundPlace = placesData.find((p) => p.id === placeId);
-    setPlace(foundPlace);
-  }, [placeId]);
+export default function PlaceDetails() {
+  const place = useAppSelector((state) => state.markers.activePlace);
 
   if (!place) {
-    return <Text>Место не найдено</Text>;
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>Место не выбрано</Text>
+      </View>
+    );
   }
 
   return (
@@ -29,8 +22,6 @@ export function PlaceDetails() {
       <Text style={styles.location}>{place.location}</Text>
       <Text style={styles.rating}>★ {place.rating}</Text>
       <Text style={styles.description}>{place.description}</Text>
-      <CommentsWidget foundPlace={place} />
-      <Button title="Назад" onPress={() => router.back()} />
     </ScrollView>
   );
 }
@@ -38,30 +29,46 @@ export function PlaceDetails() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    backgroundColor: '#fff',
   },
   image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
+    width: '100%',
+    height: 240,
+    borderRadius: 12,
     marginBottom: 16,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 26,
+    fontWeight: '600',
     marginBottom: 8,
+    color: '#333',
   },
   location: {
     fontSize: 16,
-    color: "#666",
-    marginBottom: 8,
+    color: '#888',
+    marginBottom: 4,
   },
   rating: {
     fontSize: 18,
-    color: "#FFD700",
-    marginBottom: 8,
+    color: '#FFD700',
+    marginBottom: 12,
   },
   description: {
     fontSize: 16,
-    marginBottom: 16,
+    lineHeight: 22,
+    color: '#444',
+    marginBottom: 20,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
+    marginBottom: 12,
   },
 });
