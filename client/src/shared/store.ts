@@ -1,9 +1,11 @@
+import { commentsSlice } from "@/entities/comments/model/commentsSlice";
 import { placeSlice } from "@/entities/place/model/placeSlice";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
   reducer: {
     markers: placeSlice.reducer,
+    comments: commentsSlice.reducer,
   },
 });
 
