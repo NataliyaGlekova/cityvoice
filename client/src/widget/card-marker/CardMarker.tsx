@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { AudioPlayer } from "../player/AudioPlayer";
-import { router, useLocalSearchParams } from "expo-router";
-import { useAppDispatch } from "@/shared/hooks/hooks";
+import { router } from "expo-router";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
+import { useDispatch } from "react-redux";
+import { fetchPlaces } from "@/entities/place/model/placeThunks";
+import { Place } from "@/entities/place";
+import { setActivePlace } from "@/entities/place/model/placeSlice";
+import { audioMap } from "@/shared/utils/audioMap";
 
 export type CardMarkerProps = {
   id: number;
@@ -11,9 +16,10 @@ export type CardMarkerProps = {
   description: string;
   rating: number;
   location: string;
+  place: Place | null;
   coordinates: { lat?: number; lon?: number };
   setIsModalVisible: (value: boolean) => void;
-  onBuildRoute?: (place: any) => void; // Новый пропс для обработки маршрута
+  onBuildRoute?: (place: any) => void;
 } | null;
 
 const CardMarker = (props: CardMarkerProps) => {
@@ -26,13 +32,17 @@ const CardMarker = (props: CardMarkerProps) => {
     rating,
     coordinates,
     location,
+    place,
     setIsModalVisible,
     onBuildRoute,
   } = props;
 
-  const handlePlacePress = (id: number) => {
-    console.log("Navigating to /place/", id);
-    router.push(`/place/${id}`);
+  const newPlace = useAppSelector((state) => state.markers.activePlace);
+  const dispatch = useAppDispatch();
+
+  const handlePlacePress = () => {
+    dispatch(setActivePlace(place));
+    router.push(`/place/${place?.id}`);
   };
 
   return (
@@ -46,7 +56,11 @@ const CardMarker = (props: CardMarkerProps) => {
           <Text style={styles.rating}>★ {rating}</Text>
         </View>
       </View>
-      <AudioPlayer audioSource={require("../../../assets/audio/test.mp3")} />
+      <AudioPlayer
+        audioSource={audioMap[newPlace.name]}
+        showCard={false}
+        newPlace={place}
+      />
       <TouchableOpacity
         style={styles.buildRouteButton}
         onPress={() => {
@@ -62,16 +76,16 @@ const CardMarker = (props: CardMarkerProps) => {
         style={styles.closeButton}
         onPress={() => setIsModalVisible(false)}
       >
-        <Text style={styles.routeButtonText}>Закрыть</Text>
+        <Text style={styles.closeButtonText}>Закрыть</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.routeButton}
+        style={styles.detailsButton}
         onPress={() => {
-          handlePlacePress(id);
+          handlePlacePress();
           setIsModalVisible(false);
         }}
       >
-        <Text style={styles.closeButtonText}>Подробнее</Text>
+        <Text style={styles.detailsButtonText}>Подробнее</Text>
       </TouchableOpacity>
     </View>
   );
@@ -123,6 +137,19 @@ const styles = StyleSheet.create({
     color: "#FFD700",
     fontWeight: "bold",
   },
+  detailsButton: {
+    backgroundColor: "#00bcd4", // Аквамариновый оттенок
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: "absolute",
+    bottom: 20,
+    left: 120, // Центр экрана
+  },
+  detailsButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
   closeButton: {
     backgroundColor: "#007BFF",
     paddingVertical: 10,
@@ -137,28 +164,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buildRouteButton: {
-    backgroundColor: "#2196f3", // Более насыщенный синий оттенок
+    backgroundColor: "#2196f3",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     position: "absolute",
     bottom: 20,
-    right: 15, // Переносим вправо
+    right: 15,
   },
   buildRouteButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  routeButton: {
-    backgroundColor: "#00bcd4", // Яркий аквамариновый оттенок
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    position: "absolute",
-    bottom: 20,
-    left: 120, // Центральное положение слева направо
-  },
-  routeButtonText: {
     color: "#fff",
     fontSize: 16,
   },

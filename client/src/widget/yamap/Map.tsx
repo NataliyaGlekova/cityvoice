@@ -187,6 +187,7 @@ const Map = () => {
               coordinates={{ lat: currentPlace?.lat, lon: currentPlace?.lon }}
               setIsModalVisible={setIsModalVisible}
               onBuildRoute={handleBuildRoute}
+              place={currentPlace!}
             />
           </View>
         </Modal>
