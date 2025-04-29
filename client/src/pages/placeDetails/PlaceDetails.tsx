@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, Button, ScrollView } from "react-native";
-import { useRoute, useNavigation } from '@react-navigation/native';
-import placesData from "../../../assets/places.json"; // Импорт данных о местах
+// src/pages/placeDetails/PlaceDetails.tsx
+import React, { useEffect, useState } from 'react';
+import { ScrollView, Text, Image, StyleSheet, Button } from 'react-native';
+import { useLocalSearchParams, router } from 'expo-router'; // Импорт expo-router
+import placesData from '../../../assets/places.json';
 
-// Типизация данных для мест
 type Place = {
   id: number;
   imageUrl: string;
@@ -16,20 +16,19 @@ type Place = {
 };
 
 export function PlaceDetails() {
-  const route = useRoute();
-  const navigation = useNavigation();
-  const { placeId } = route.params as { placeId: number };
+  const { id } = useLocalSearchParams(); // Получаем id из URL
+  const placeId = Number(id); // Преобразуем строку в число
 
   const [place, setPlace] = useState<Place | undefined>(undefined);
 
   useEffect(() => {
-    // Найдем место по ID
+    console.log('Received placeId:', placeId); // Для отладки
     const foundPlace = placesData.find((p) => p.id === placeId);
     setPlace(foundPlace);
   }, [placeId]);
 
   if (!place) {
-    return <Text>Загрузка...</Text>;
+    return <Text>Место не найдено</Text>;
   }
 
   return (
@@ -39,8 +38,7 @@ export function PlaceDetails() {
       <Text style={styles.location}>{place.location}</Text>
       <Text style={styles.rating}>★ {place.rating}</Text>
       <Text style={styles.description}>{place.description}</Text>
-
-      <Button title="Назад" onPress={() => navigation.goBack()} />
+      <Button title="Назад" onPress={() => router.back()} />
     </ScrollView>
   );
 }
@@ -50,24 +48,24 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 200,
     borderRadius: 10,
     marginBottom: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 8,
   },
   location: {
     fontSize: 16,
-    color: "#666",
+    color: '#666',
     marginBottom: 8,
   },
   rating: {
     fontSize: 18,
-    color: "#FFD700",
+    color: '#FFD700',
     marginBottom: 8,
   },
   description: {

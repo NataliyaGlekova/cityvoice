@@ -1,8 +1,13 @@
 const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const apiRouter = require('./routes/apiRouter');
 const app = express();
+
+app.use(cors({
+    origin: 'http://localhost:8081', // Разрешить только клиент
+  }));
 
 app.use(express.json());
 app.use(morgan('dev'));

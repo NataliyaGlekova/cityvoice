@@ -26,12 +26,10 @@ export const placeSlice = createSlice({
     });
     builder.addCase(fetchPlaces.rejected, (state, action) => {
       state.loading = false;
-<<<<<<< HEAD
       state.error = action.error.message || "Failed to fetch places";
-=======
->>>>>>> eugene3
     });
   },
 });
 
+export const { setActivePlace } = placeSlice.actions;
 export default placeSlice.reducer;

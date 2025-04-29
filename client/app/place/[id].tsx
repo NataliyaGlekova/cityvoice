@@ -1,5 +1,5 @@
-import { PlacePage } from '@/widget/player/AudioPlayer';
+import { PlaceDetails } from '../../src/pages/placeDetails/PlaceDetails';
 
-export default function PlaceScreen() {
-  return <PlacePage />;
+export default function PlaceDetailScreen() {
+  return <PlaceDetails />;
 }

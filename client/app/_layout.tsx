@@ -13,7 +13,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { Provider } from "react-redux";
 import { store } from "../src/shared/store";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { GestureHandlerRootView } from 'react-native-gesture-handler'; // Для поддержки жестов
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -24,10 +24,8 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Stack
             screenOptions={{
               gestureEnabled: true, // Включаем жесты смахивания
               headerBackTitleVisible: false, // Скрываем текст рядом со стрелкой назад
