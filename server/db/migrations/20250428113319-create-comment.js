@@ -13,8 +13,8 @@ module.exports = {
       text: {
         type: Sequelize.TEXT,
       },
-      userId: {
-        type: Sequelize.INTEGER,
+      name: {
+        type: Sequelize.STRING,
       },
       markerId: {
         type: Sequelize.INTEGER,

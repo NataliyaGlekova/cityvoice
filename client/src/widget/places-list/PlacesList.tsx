@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { useAppSelector, useAppDispatch } from '@/shared/hooks/hooks';
 import { fetchPlaces } from '@/entities/place/model/placeThunks';
 import { Place } from '@/entities/place/model/types';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export function PlacesList() {
   const dispatch = useAppDispatch();
@@ -48,7 +49,8 @@ export function PlacesList() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }}>
+      <View style= {{height: 70}}/>
       <Button
         title={`Сортировать по рейтингу: ${isAscending ? 'По возрастанию' : 'По убыванию'}`}
         onPress={toggleSortOrder}
@@ -68,7 +70,8 @@ export function PlacesList() {
         )}
         contentContainerStyle={styles.listContent}
       />
-    </View>
+      <View style= {{height: 70}}/>
+    </ScrollView>
   );
 }
 

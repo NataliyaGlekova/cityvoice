@@ -55,7 +55,7 @@ export default function TabLayout() {
             ),
           }}
         />
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="explore"
           options={{
             title: "Explore",
@@ -63,7 +63,7 @@ export default function TabLayout() {
               <IconSymbol size={28} name="person.fill" color={color} />
             ),
           }}
-        />
+        /> */}
       </Tabs>
     </View>
   );
