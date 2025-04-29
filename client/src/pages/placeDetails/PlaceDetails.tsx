@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native";
 import { useAppSelector } from "@/shared/hooks/hooks";
-import { router } from "expo-router";
 import CommentsWidget from "@/widget/comments-widget/CommentsWidget";
 import { AudioPlayer } from "../../widget/player/AudioPlayer";
 import { audioMap } from "../../shared/utils/audioMap";
