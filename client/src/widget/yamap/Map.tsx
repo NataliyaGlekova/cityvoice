@@ -69,7 +69,7 @@ const Map = () => {
     coordinates: { lat: number; lon: number };
   }) => {
     if (userLocation && destination) {
-      mapRef.current.findDrivingRoutes(
+      mapRef.current.findPedestrianRoutes(
         [
           { lat: userLocation.lat, lon: userLocation.lon },
           {
