@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { fetchPlaces } from "@/entities/place/model/placeThunks";
 import { Place } from "@/entities/place";
 import { setActivePlace } from "@/entities/place/model/placeSlice";
+import { audioMap } from "@/shared/utils/audioMap";
 
 export type CardMarkerProps = {
   id: number;
@@ -35,6 +36,8 @@ const CardMarker = (props: CardMarkerProps) => {
     setIsModalVisible,
     onBuildRoute,
   } = props;
+
+  const newPlace = useAppSelector((state) => state.markers.activePlace);
   const dispatch = useAppDispatch();
 
   const handlePlacePress = () => {
@@ -53,7 +56,11 @@ const CardMarker = (props: CardMarkerProps) => {
           <Text style={styles.rating}>★ {rating}</Text>
         </View>
       </View>
-      <AudioPlayer audioSource={require("../../../assets/audio/test.mp3")} />
+      <AudioPlayer
+        audioSource={audioMap[newPlace.name]}
+        showCard={false}
+        newPlace={place}
+      />
       <TouchableOpacity
         style={styles.buildRouteButton}
         onPress={() => {
