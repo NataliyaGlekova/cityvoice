@@ -8,12 +8,20 @@ const initialState: PlaceSliceT = {
   places: null,
   loading: false,
   error: null,
+  isActive: null,
 };
 
 export const placeSlice = createSlice({
   name: "place",
   initialState,
-  reducers: {},
+  reducers: {
+    setActivePlace(state, action: PayloadAction<string>) {
+      state.isActive = action.payload;
+    },
+    clearActivePlace(state) {
+      state.isActive = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchPlaces.pending, (state) => {
       state.loading = true;
@@ -23,6 +31,7 @@ export const placeSlice = createSlice({
       state.places = action.payload;
       state.loading = false;
       state.error = null;
+      state.isActive = null;
     });
     builder.addCase(fetchPlaces.rejected, (state, action) => {
         state.loading = false;
@@ -32,5 +41,5 @@ export const placeSlice = createSlice({
   },
 });
 
-
+export const { setActivePlace, clearActivePlace } = placeSlice.actions;
 export default placeSlice.reducer;

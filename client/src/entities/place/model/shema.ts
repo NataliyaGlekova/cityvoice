@@ -21,4 +21,5 @@ export type PlaceSliceT = {
   places: PlaceArrayT|null;
   loading: boolean;
   error: string | null;
+  isActive: string | null;
 };

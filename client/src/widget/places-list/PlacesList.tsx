@@ -1,42 +1,51 @@
-// src/widget/places-list/PlacesList.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Image, Button } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Image, Button, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
-import placesData from '../../../assets/places.json';
-
-// Типизация данных для мест
-type Place = {
-  id: number;
-  imageUrl: string;
-  name: string;
-  description: string;
-  rating: number;
-  location: string;
-  lat: number;
-  lon: number;
-};
+import { useAppSelector, useAppDispatch } from '@/shared/hooks/hooks';
+import { fetchPlaces } from '@/entities/place/model/placeThunks';
+import { Place } from '@/entities/place/model/types';
 
 export function PlacesList() {
-  const [sortedPlaces, setSortedPlaces] = useState<Place[]>(placesData);
+  const dispatch = useAppDispatch();
+  const places = useAppSelector((state) => state.markers.places);
+  const [sortedPlaces, setSortedPlaces] = useState<Place[]>([]);
   const [isAscending, setIsAscending] = useState(true);
 
-  // Функция для сортировки по рейтингу
+  // Загрузка данных из Redux
+  useEffect(() => {
+    dispatch(fetchPlaces());
+  }, [dispatch]);
+
+  // Сортировка при изменении isAscending или places
+  useEffect(() => {
+    if (places) {
+      const sorted = [...places].sort((a, b) => {
+        return isAscending ? a.rating - b.rating : b.rating - a.rating;
+      });
+      setSortedPlaces(sorted);
+    }
+  }, [isAscending, places]);
+
+  // Функция для сортировки
   const toggleSortOrder = () => {
     setIsAscending((prev) => !prev);
   };
 
-  // useEffect для сортировки при изменении isAscending
-  useEffect(() => {
-    const sorted = [...placesData].sort((a, b) => {
-      return isAscending ? a.rating - b.rating : b.rating - a.rating;
-    });
-    setSortedPlaces(sorted);
-  }, [isAscending]);
-
-  const handlePlacePress = (placeId: number) => {
-    console.log('Navigating to /place/', placeId); // Для отладки
-    router.push(`/place/${placeId}`); // Навигация к динамическому маршруту
+  // Навигация к странице места
+  const handlePlacePress = (placeId: string) => {
+    console.log('Navigating to /place/', placeId);
+    router.push(`/place/${placeId}`);
   };
+
+
+  // Обработка пустого списка
+  if (!places || places.length === 0) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Места не найдены</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -46,7 +55,7 @@ export function PlacesList() {
       />
       <FlatList
         data={sortedPlaces}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card} onPress={() => handlePlacePress(item.id)}>
             <Image source={{ uri: item.imageUrl }} style={styles.image} />
@@ -98,5 +107,16 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: 16,
     color: '#FFD700',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  errorText: {
+    fontSize: 16,
+    color: 'red',
+    marginBottom: 16,
   },
 });
