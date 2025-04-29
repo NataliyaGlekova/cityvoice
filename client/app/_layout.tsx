@@ -13,7 +13,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/shared/hooks/useColorScheme";
 import { Provider } from "react-redux";
 import { store } from "../src/shared/store";
-import { GestureHandlerRootView } from 'react-native-gesture-handler'; // Для поддержки жестов
+import { GestureHandlerRootView } from "react-native-gesture-handler"; // Для поддержки жестов
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -24,18 +24,27 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack
             screenOptions={{
-              gestureEnabled: true, // Включаем жесты смахивания
-              headerBackTitleVisible: false, // Скрываем текст рядом со стрелкой назад
-              // headerBackTitle: '', // Скрываем текст рядом со стрелкой назад
+              gestureEnabled: true,
+              headerBackTitle: "", // на всякий случай
+              headerBackVisible: true,
             }}
           >
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(tabs)"
+              options={{ headerShown: false, title: "" }}
+            />
             <Stack.Screen
               name="place/[id]"
-              options={{ title: "Place Details" }}
+              options={{
+                title: "Place Details",
+                headerBackVisible: true,
+                headerBackTitle: "", // лишним не будет
+              }}
             />
           </Stack>
           <StatusBar style="auto" />

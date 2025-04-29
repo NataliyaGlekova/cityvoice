@@ -1,69 +1,71 @@
-import React, { useState } from "react";
+import {
+  addComment,
+  fetchCommentsByID,
+} from "@/entities/comments/model/commentsThunks";
+import { NewCommentT } from "@/entities/comments/model/shema";
+import { PlaceT } from "@/entities/place/model/shema";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TextInput,
   Button,
+  ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 
-interface Comment {
-  id: string;
-  author: string;
-  text: string;
-  timestamp: string;
+interface Props {
+  foundPlace: PlaceT;
 }
 
-const CommentsWidget = () => {
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: "1",
-      author: "Иван Иванов",
-      text: "Это первый тестовый комментарий",
-      timestamp: "10:30 12.05.2023",
-    },
-    {
-      id: "2",
-      author: "Петр Петров",
-      text: "Второй комментарий для примера",
-      timestamp: "11:45 12.05.2023",
-    },
-    {
-      id: "3",
-      author: "Анна Сидорова",
-      text: "Еще один комментарий в списке",
-      timestamp: "14:20 13.05.2023",
-    },
-  ]);
-
+const CommentsWidget = ({ foundPlace }: Props) => {
+  const dispatch = useAppDispatch();
+  const { comments, loading } = useAppSelector((state) => state.comments);
   const [newComment, setNewComment] = useState("");
+  const [visibleComments, setVisibleComments] = useState(5);
+
+  useEffect(() => {
+    void dispatch(fetchCommentsByID(foundPlace.id));
+  }, [dispatch, foundPlace.id]);
 
   const handleAddComment = () => {
     if (newComment.trim() === "") return;
 
-    const comment: Comment = {
-      id: Date.now().toString(),
-      author: "Текущий пользователь",
+    const comment: NewCommentT = {
+      name: "Текущий пользователь",
       text: newComment,
-      timestamp: new Date().toLocaleString(),
+      markerId: foundPlace.id,
     };
 
-    setComments([...comments, comment]);
+    dispatch(addComment(comment));
     setNewComment("");
   };
 
+  const loadMoreComments = () => {
+    setVisibleComments((prev) => prev + 5);
+  };
+
+  if (loading) return <ActivityIndicator size="large" color="#007bff" />;
   return (
     <View style={styles.container}>
       <Text>Комментарии:</Text>
       <View style={styles.commentsList}>
-        {comments.map((comment) => (
+        {comments.slice(0, visibleComments).map((comment) => (
           <View key={comment.id} style={styles.commentContainer}>
-            <Text style={styles.author}>{comment.author}</Text>
+            <Text style={styles.author}>{comment.name}</Text>
             <Text style={styles.text}>{comment.text}</Text>
-            <Text style={styles.timestamp}>{comment.timestamp}</Text>
           </View>
         ))}
+        {visibleComments < comments.length && (
+          <TouchableOpacity
+            onPress={loadMoreComments}
+            style={styles.loadMoreButton}
+          >
+            <Text style={styles.loadMoreText}>Показать еще</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.inputContainer}>
         <TextInput
@@ -115,6 +117,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     marginRight: 8,
+  },
+  loadMoreButton: {
+    padding: 10,
+    alignItems: "center",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  loadMoreText: {
+    color: "#007bff",
+    fontWeight: "bold",
   },
 });
 
