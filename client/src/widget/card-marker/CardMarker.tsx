@@ -8,14 +8,23 @@ export type CardMarkerProps = {
   description: string;
   rating: number;
   location: string;
+  coordinates: { lat?: number; lon?: number };
   setIsModalVisible: (value: boolean) => void;
+  onBuildRoute?: (place: any) => void; // Новый пропс для обработки маршрута
 } | null;
 
 const CardMarker = (props: CardMarkerProps) => {
-
   if (!props) return null;
-  const { imageUrl, name, description, rating, location, setIsModalVisible } =
-    props;
+  const {
+    imageUrl,
+    name,
+    description,
+    rating,
+    coordinates,
+    location,
+    setIsModalVisible,
+    onBuildRoute,
+  } = props;
 
   return (
     <View style={styles.card}>
@@ -30,8 +39,19 @@ const CardMarker = (props: CardMarkerProps) => {
       </View>
       <AudioPlayer audioSource={require("../../../assets/audio/test.mp3")} />
       <TouchableOpacity
+        style={styles.buildRouteButton}
+        onPress={() => {
+          if (typeof onBuildRoute === "function") {
+            onBuildRoute({ name, coordinates }); // Отправляем имя и расположение точки
+          }
+          setIsModalVisible(false);
+        }}
+      >
+        <Text style={styles.buildRouteButtonText}>Построить маршрут</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         style={styles.closeButton}
-        onPress={() => setIsModalVisible(false)} // Закрытие модального окна
+        onPress={() => setIsModalVisible(false)}
       >
         <Text style={styles.closeButtonText}>Закрыть</Text>
       </TouchableOpacity>
@@ -84,6 +104,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#FFD700",
     fontWeight: "bold",
+  },
+  buildRouteButton: {
+    backgroundColor: "green",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: "absolute",
+    bottom: 20,
+    left: 120,
+  },
+  buildRouteButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
   closeButton: {
     backgroundColor: "#007BFF",

@@ -9,7 +9,7 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
-import YaMap, { Marker } from "react-native-yamap";
+import YaMap, { Marker, Polyline } from "react-native-yamap";
 import CardMarker from "../card-marker/CardMarker";
 import placesData from "../../../assets/places.json";
 import { PlaceT } from "@/entities/place/model/shema";
@@ -36,6 +36,7 @@ const Map = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Состояние для отображения модального окна
   const [currentPlace, setCuurentId] = useState<Card | null>(null); // Состояние для отображения модального окна
   const [selectedPlace, setSelectedPlace] = useState<any>(null); // Состояние для выбранного места
+  const [routePoints, setRoutePoints] = useState([]);
 
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -61,6 +62,65 @@ const Map = () => {
   const handleMarkerPress = (place: any) => {
     setSelectedPlace(place);
     setIsModalVisible(true); // Открываем модальное окно
+  };
+
+  const handleBuildRoute = (destination: {
+    name: string;
+    coordinates: { lat: number; lon: number };
+  }) => {
+    if (userLocation && destination) {
+      mapRef.current.findDrivingRoutes(
+        [
+          { lat: userLocation.lat, lon: userLocation.lon },
+          {
+            lat: destination.coordinates.lat,
+            lon: destination.coordinates.lon,
+          },
+        ],
+        (routesEvent) => {
+          if (routesEvent && routesEvent.routes.length > 0) {
+            const firstRoute = routesEvent.routes[0];
+
+            // Суммируем общее время маршрута
+            const totalDurationMs = firstRoute.sections.reduce(
+              (sum, section) => sum + section.routeInfo.durationMs,
+              0
+            );
+
+            // Приводим время к удобному формату
+            const formattedDuration = formatDuration(totalDurationMs);
+
+            // Сообщаем о результате в консоль
+            console.log(`Продолжительность маршрута: ${formattedDuration}`);
+
+            // Объединяем все точки из секций маршрута
+            const allPoints = firstRoute.sections.reduce(
+              (acc, section) => acc.concat(section.points),
+              []
+            );
+
+            setRoutePoints(allPoints); // Ставим объединённые точки в состояние
+          }
+        },
+        (error) => {
+          console.error("Ошибка при поиске маршрута:", error.message);
+          alert(
+            "Возникла ошибка при построении маршрута. Проверьте подключение к Интернету и повторите попытку."
+          );
+        }
+      );
+    } else {
+      alert("Местоположение пользователя неизвестно. Повторите попытку позже.");
+    }
+  };
+
+  // Функция форматирования времени
+  const formatDuration = (ms) => {
+    const seconds = ms / 1000;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    return `${hours ? hours + " часа " : ""}${minutes} минут`;
   };
 
   useEffect(() => {
@@ -96,7 +156,11 @@ const Map = () => {
     };
   }, []);
 
-  // if (!places) return <ActivityIndicator />;
+  const cancelRoute = () => {
+    setRoutePoints([]); // Очищаем массив координат маршрута
+  };
+
+  if (!places) return <ActivityIndicator />;
   return (
     <View style={styles.container}>
       <YaMap
@@ -125,6 +189,13 @@ const Map = () => {
             }} // Открытие модального окна при клике на маркер
           />
         ))}
+        {routePoints.length > 0 && (
+          <Polyline
+            points={routePoints}
+            strokeColor="#0000ff" // Цвет линии маршрута (синий)
+            strokeWidth={5} // Толщина линии
+          />
+        )}
       </YaMap>
       {/* Модальное окно с информацией о месте */}
       {selectedPlace && (
@@ -141,12 +212,22 @@ const Map = () => {
               description={currentPlace?.description || ""}
               rating={currentPlace?.rating || 0}
               location={currentPlace?.location || ""}
+              coordinates={{ lat: currentPlace?.lat, lon: currentPlace?.lon }}
               setIsModalVisible={setIsModalVisible}
+              onBuildRoute={handleBuildRoute}
             />
           </View>
         </Modal>
       )}
-      <View style={styles.zoomControls}>
+      <View style={styles.сontrols}>
+        {routePoints.length > 0 && (
+          <TouchableOpacity
+            style={styles.cancelRouteButton}
+            onPress={cancelRoute}
+          >
+            <Text style={styles.buttonText}>Х</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity style={styles.zoomButton} onPress={increaseZoom}>
           <Text style={styles.zoomText}>+</Text>
         </TouchableOpacity>
@@ -178,7 +259,7 @@ const styles = StyleSheet.create({
       height: "100%", // Резервный вариант, если не удается определить платформу
     },
   }) as ViewStyle, // Указываем тип ViewStyle для предотвращения ошибки
-  zoomControls: {
+  сontrols: {
     position: "absolute",
     bottom: 60,
     right: 10,
@@ -237,6 +318,21 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  cancelRouteButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: "rgba(255, 0, 0, 0.5)", // Красный фон
+    padding: 10,
+    marginTop: 5,
+    borderRadius: 30,
+    alignItems: "center",
+    display: "flex",
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 14,
   },
 });
 
