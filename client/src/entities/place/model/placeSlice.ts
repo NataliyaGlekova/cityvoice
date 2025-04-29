@@ -2,44 +2,34 @@ import { createSlice } from "@reduxjs/toolkit";
 import { PlaceSliceT } from "./shema";
 import { fetchPlaces } from "./placeThunks";
 
-
-
 const initialState: PlaceSliceT = {
-  places: null,
+  places: [],
   loading: false,
-  error: null,
-  isActive: null,
+  activePlace: null,
 };
 
 export const placeSlice = createSlice({
   name: "place",
   initialState,
   reducers: {
-    setActivePlace(state, action: PayloadAction<string>) {
-      state.isActive = action.payload;
-    },
-    clearActivePlace(state) {
-      state.isActive = null;
+    setActivePlace: (state, action) => {
+      state.activePlace = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPlaces.pending, (state) => {
       state.loading = true;
-      state.error = null;
     });
     builder.addCase(fetchPlaces.fulfilled, (state, action) => {
       state.places = action.payload;
       state.loading = false;
-      state.error = null;
-      state.isActive = null;
     });
     builder.addCase(fetchPlaces.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Failed to fetch places";
-      },
-    );
+      state.loading = false;
+      state.error = action.error.message || "Failed to fetch places";
+    });
   },
 });
 
-export const { setActivePlace, clearActivePlace } = placeSlice.actions;
+export const { setActivePlace } = placeSlice.actions;
 export default placeSlice.reducer;

@@ -29,11 +29,11 @@ export default function TabLayout() {
         }}
       >
         <Tabs.Screen
-          name="main" 
+          name="main"
           options={{
-            title: "Home", 
+            title: "Home",
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="house.fill" color={color} /> 
+              <IconSymbol size={28} name="house.fill" color={color} />
             ),
           }}
         />

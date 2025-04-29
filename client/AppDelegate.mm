@@ -1,7 +1,8 @@
 #import "AppDelegate.h"
-#import <YandexMapsMobile/YMKMapKitFactory.h>
+
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
+#import <YandexMapsMobile/YMKMapKitFactory.h>
 
 @implementation AppDelegate
 

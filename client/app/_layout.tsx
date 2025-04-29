@@ -33,10 +33,13 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="place/[id]" options={{ title: 'Place Details' }} />
+            <Stack.Screen
+              name="place/[id]"
+              options={{ title: "Place Details" }}
+            />
           </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+          <StatusBar style="auto" />
+        </ThemeProvider>
       </GestureHandlerRootView>
     </Provider>
   );

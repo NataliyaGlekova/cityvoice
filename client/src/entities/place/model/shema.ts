@@ -18,8 +18,7 @@ export type PlaceArrayT = z.infer<typeof PlaceArraySchema>;
 export type PlaceT = z.infer<typeof PlaceSchema>;
 
 export type PlaceSliceT = {
-  places: PlaceArrayT|null;
+  places: PlaceArrayT;
   loading: boolean;
-  error: string | null;
-  isActive: string | null;
+  activePlace: PlaceT | null;
 };
