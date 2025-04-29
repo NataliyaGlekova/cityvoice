@@ -11,22 +11,10 @@ import {
 } from "react-native";
 import YaMap, { Marker, Polyline } from "react-native-yamap";
 import CardMarker from "../card-marker/CardMarker";
-import placesData from "../../../assets/places.json";
 import { PlaceT } from "@/entities/place/model/shema";
 import { useAppSelector } from "@/shared/hooks/hooks";
-
 import Geolocation from "@react-native-community/geolocation";
-
-type Card = {
-  id: number;
-  imageUrl: string;
-  name: string;
-  description: string;
-  rating: number;
-  location: string;
-  lat: number;
-  lon: number;
-};
+import { useYaMapInit } from "@/shared/hooks/useYaMapInit";
 
 const Map = () => {
   const [zoomLevel, setZoomLevel] = useState(10);
@@ -34,7 +22,7 @@ const Map = () => {
   const places = useAppSelector((state) => state.markers.places);
 
   const [isModalVisible, setIsModalVisible] = useState(false); // Состояние для отображения модального окна
-  const [currentPlace, setCuurentId] = useState<Card | null>(null); // Состояние для отображения модального окна
+  const [currentPlace, setCuurentId] = useState<PlaceT | null>(null); // Состояние для отображения модального окна
   const [selectedPlace, setSelectedPlace] = useState<any>(null); // Состояние для выбранного места
   const [routePoints, setRoutePoints] = useState([]);
 
@@ -42,6 +30,8 @@ const Map = () => {
     lat: number;
     lon: number;
   } | null>(null);
+
+  const isYamapReady = useYaMapInit();
 
   const increaseZoom = () => {
     if (mapRef.current && zoomLevel < 18) {
@@ -81,25 +71,14 @@ const Map = () => {
           if (routesEvent && routesEvent.routes.length > 0) {
             const firstRoute = routesEvent.routes[0];
 
-            // Суммируем общее время маршрута
-            const totalDurationMs = firstRoute.sections.reduce(
-              (sum, section) => sum + section.routeInfo.durationMs,
-              0
-            );
-
-            // Приводим время к удобному формату
-            const formattedDuration = formatDuration(totalDurationMs);
-
-            // Сообщаем о результате в консоль
-            console.log(`Продолжительность маршрута: ${formattedDuration}`);
-
-            // Объединяем все точки из секций маршрута
+            // Суммируем все точки из секций маршрута
             const allPoints = firstRoute.sections.reduce(
               (acc, section) => acc.concat(section.points),
               []
             );
 
-            setRoutePoints(allPoints); // Ставим объединённые точки в состояние
+            // Ставим объединённые точки в состояние
+            setRoutePoints(allPoints);
           }
         },
         (error) => {
@@ -112,15 +91,6 @@ const Map = () => {
     } else {
       alert("Местоположение пользователя неизвестно. Повторите попытку позже.");
     }
-  };
-
-  // Функция форматирования времени
-  const formatDuration = (ms) => {
-    const seconds = ms / 1000;
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-
-    return `${hours ? hours + " часа " : ""}${minutes} минут`;
   };
 
   useEffect(() => {
@@ -163,40 +133,42 @@ const Map = () => {
   if (!places) return <ActivityIndicator />;
   return (
     <View style={styles.container}>
-      <YaMap
-        ref={mapRef}
-        initialRegion={{
-          lat: userLocation?.lat || 55.91421,
-          lon: userLocation?.lon || 36.859635,
-          zoom: zoomLevel,
-        }}
-        showUserPosition={true}
-        followUser={true}
-        userLocationIcon={require("../../../assets/navigation.png")} // Иконка для отображения позиции пользователя
-        userLocationIconScale={0.3} // Масштабирование иконки
-        style={styles.map}
-      >
-        {places.map((place, index) => (
-          <Marker
-            key={index}
-            point={{ lat: place.lat, lon: place.lon }}
-            source={require("../../../assets/marker-icon.png")} // Иконка маркера
-            scale={0.5} // Масштабирование иконки
-            onPress={() => {
-              handleMarkerPress(place);
+      {isYamapReady && (
+        <YaMap
+          ref={mapRef}
+          initialRegion={{
+            lat: userLocation?.lat || 55.91421,
+            lon: userLocation?.lon || 36.859635,
+            zoom: zoomLevel,
+          }}
+          showUserPosition={true}
+          followUser={true}
+          userLocationIcon={require("../../../assets/navigation.png")} // Иконка для отображения позиции пользователя
+          userLocationIconScale={0.3} // Масштабирование иконки
+          style={styles.map}
+        >
+          {places.map((place, index) => (
+            <Marker
+              key={index}
+              point={{ lat: place.lat, lon: place.lon }}
+              source={require("../../../assets/marker-icon.png")} // Иконка маркера
+              scale={0.5} // Масштабирование иконки
+              onPress={() => {
+                handleMarkerPress(place);
 
-              setCuurentId(place);
-            }} // Открытие модального окна при клике на маркер
-          />
-        ))}
-        {routePoints.length > 0 && (
-          <Polyline
-            points={routePoints}
-            strokeColor="#0000ff" // Цвет линии маршрута (синий)
-            strokeWidth={5} // Толщина линии
-          />
-        )}
-      </YaMap>
+                setCuurentId(place);
+              }} // Открытие модального окна при клике на маркер
+            />
+          ))}
+          {routePoints.length > 0 && (
+            <Polyline
+              points={routePoints}
+              strokeColor="#0000ff" // Цвет линии маршрута (синий)
+              strokeWidth={5} // Толщина линии
+            />
+          )}
+        </YaMap>
+      )}
       {/* Модальное окно с информацией о месте */}
       {selectedPlace && (
         <Modal
@@ -248,7 +220,7 @@ const styles = StyleSheet.create({
   map: Platform.select({
     ios: {
       width: "100%",
-      height: 700, // Устанавливаем фиксированную высоту для iOS
+      height: 770, // Устанавливаем фиксированную высоту для iOS
     },
     android: {
       width: "100%",
