@@ -81,25 +81,24 @@ const Map = () => {
           if (routesEvent && routesEvent.routes.length > 0) {
             const firstRoute = routesEvent.routes[0];
 
-            // Суммируем общее время маршрута
-            const totalDurationMs = firstRoute.sections.reduce(
-              (sum, section) => sum + section.routeInfo.durationMs,
-              0
-            );
-
-            // Приводим время к удобному формату
-            const formattedDuration = formatDuration(totalDurationMs);
-
-            // Сообщаем о результате в консоль
-            console.log(`Продолжительность маршрута: ${formattedDuration}`);
-
-            // Объединяем все точки из секций маршрута
+            // Суммируем все точки из секций маршрута
             const allPoints = firstRoute.sections.reduce(
               (acc, section) => acc.concat(section.points),
               []
             );
 
-            setRoutePoints(allPoints); // Ставим объединённые точки в состояние
+            // Общая продолжительность маршрута
+            const totalDurationMs = firstRoute.sections.reduce(
+              (sum, section) => sum + section.routeInfo.durationMs,
+              0
+            );
+
+            // Форматируем время пути
+            const formattedDuration = formatDuration(totalDurationMs);
+            console.log(`Продолжительность маршрута: ${formattedDuration}`);
+
+            // Ставим объединённые точки в состояние
+            setRoutePoints(allPoints);
           }
         },
         (error) => {
@@ -248,7 +247,7 @@ const styles = StyleSheet.create({
   map: Platform.select({
     ios: {
       width: "100%",
-      height: 700, // Устанавливаем фиксированную высоту для iOS
+      height: 770, // Устанавливаем фиксированную высоту для iOS
     },
     android: {
       width: "100%",
