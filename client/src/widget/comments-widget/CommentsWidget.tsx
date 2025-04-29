@@ -50,7 +50,7 @@ const CommentsWidget = ({ foundPlace }: Props) => {
   if (loading) return <ActivityIndicator size="large" color="#007bff" />;
   return (
     <View style={styles.container}>
-      <Text>Комментарии:</Text>
+      <Text>Отзывы:</Text>
       <View style={styles.commentsList}>
         {comments.slice(0, visibleComments).map((comment) => (
           <View key={comment.id} style={styles.commentContainer}>

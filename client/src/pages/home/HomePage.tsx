@@ -25,15 +25,8 @@ const DATA = [
 ];
 
 const Item = ({ title, description, id }) => {
-  const navigation = useNavigation();
-
   return (
-    <TouchableOpacity
-      style={styles.item}
-      onPress={() =>
-        navigation.navigate("DetailPage", { id, title, description })
-      }
-    >
+    <TouchableOpacity style={styles.item}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
     </TouchableOpacity>
