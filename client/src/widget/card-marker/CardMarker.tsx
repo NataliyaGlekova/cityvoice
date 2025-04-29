@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { AudioPlayer } from "../player/AudioPlayer";
-import { router, useLocalSearchParams } from "expo-router";
-import { useAppDispatch } from "@/shared/hooks/hooks";
+import { router } from "expo-router";
+import { useAppSelector } from "@/shared/hooks/hooks";
 
 export type CardMarkerProps = {
   id: number;
@@ -13,7 +13,7 @@ export type CardMarkerProps = {
   location: string;
   coordinates: { lat?: number; lon?: number };
   setIsModalVisible: (value: boolean) => void;
-  onBuildRoute?: (place: any) => void; // Новый пропс для обработки маршрута
+  onBuildRoute?: (place: any) => void;
 } | null;
 
 const CardMarker = (props: CardMarkerProps) => {
@@ -29,9 +29,10 @@ const CardMarker = (props: CardMarkerProps) => {
     setIsModalVisible,
     onBuildRoute,
   } = props;
+  // const places = useAppSelector((state) => state.markers.places);
 
-  const handlePlacePress = (id: number) => {
-    console.log("Navigating to /place/", id);
+  const handleDetailsPress = (id: number) => {
+    console.log("Redirecting to place detail page for id:", id);
     router.push(`/place/${id}`);
   };
 
@@ -62,16 +63,16 @@ const CardMarker = (props: CardMarkerProps) => {
         style={styles.closeButton}
         onPress={() => setIsModalVisible(false)}
       >
-        <Text style={styles.routeButtonText}>Закрыть</Text>
+        <Text style={styles.closeButtonText}>Закрыть</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.routeButton}
+        style={styles.detailsButton}
         onPress={() => {
-          handlePlacePress(id);
+          handleDetailsPress(id);
           setIsModalVisible(false);
         }}
       >
-        <Text style={styles.closeButtonText}>Подробнее</Text>
+        <Text style={styles.detailsButtonText}>Подробнее</Text>
       </TouchableOpacity>
     </View>
   );
@@ -123,6 +124,19 @@ const styles = StyleSheet.create({
     color: "#FFD700",
     fontWeight: "bold",
   },
+  detailsButton: {
+    backgroundColor: "#00bcd4", // Аквамариновый оттенок
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    position: "absolute",
+    bottom: 20,
+    left: 120, // Центр экрана
+  },
+  detailsButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
   closeButton: {
     backgroundColor: "#007BFF",
     paddingVertical: 10,
@@ -137,28 +151,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buildRouteButton: {
-    backgroundColor: "#2196f3", // Более насыщенный синий оттенок
+    backgroundColor: "#2196f3",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     position: "absolute",
     bottom: 20,
-    right: 15, // Переносим вправо
+    right: 15,
   },
   buildRouteButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  routeButton: {
-    backgroundColor: "#00bcd4", // Яркий аквамариновый оттенок
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    position: "absolute",
-    bottom: 20,
-    left: 120, // Центральное положение слева направо
-  },
-  routeButtonText: {
     color: "#fff",
     fontSize: 16,
   },
