@@ -20,5 +20,5 @@ export type PlaceT = z.infer<typeof PlaceSchema>;
 export type PlaceSliceT = {
   places: PlaceArrayT;
   loading: boolean;
-  error: string | null;
+  activePlace: PlaceT | null;
 };

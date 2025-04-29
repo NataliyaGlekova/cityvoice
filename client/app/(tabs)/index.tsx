@@ -12,12 +12,12 @@ import { ActivityIndicator, View } from "react-native";
 
 export default function MapScreen() {
   const dispatch = useAppDispatch();
-  const markers = useAppSelector((state) => state.markers);
+  const places = useAppSelector((state) => state.markers.places);
   useEffect(() => {
     void dispatch(fetchPlaces());
   }, []);
 
-  if (!markers) return <ActivityIndicator />;
+  if (places?.length === 0) return <ActivityIndicator />;
   return (
     <View style={{ flex: 1 }}>
       <MapPage />
