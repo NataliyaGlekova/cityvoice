@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { AudioPlayer } from "../player/AudioPlayer";
 import { router } from "expo-router";
-import { useAppSelector } from "@/shared/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
+import { useDispatch } from "react-redux";
+import { fetchPlaces } from "@/entities/place/model/placeThunks";
+import { Place } from "@/entities/place";
+import { setActivePlace } from "@/entities/place/model/placeSlice";
 
 export type CardMarkerProps = {
   id: number;
@@ -11,6 +15,7 @@ export type CardMarkerProps = {
   description: string;
   rating: number;
   location: string;
+  place: Place | null;
   coordinates: { lat?: number; lon?: number };
   setIsModalVisible: (value: boolean) => void;
   onBuildRoute?: (place: any) => void;
@@ -26,14 +31,15 @@ const CardMarker = (props: CardMarkerProps) => {
     rating,
     coordinates,
     location,
+    place,
     setIsModalVisible,
     onBuildRoute,
   } = props;
-  // const places = useAppSelector((state) => state.markers.places);
+  const dispatch = useAppDispatch();
 
-  const handleDetailsPress = (id: number) => {
-    console.log("Redirecting to place detail page for id:", id);
-    router.push(`/place/${id}`);
+  const handlePlacePress = () => {
+    dispatch(setActivePlace(place));
+    router.push(`/place/${place?.id}`);
   };
 
   return (
@@ -68,7 +74,7 @@ const CardMarker = (props: CardMarkerProps) => {
       <TouchableOpacity
         style={styles.detailsButton}
         onPress={() => {
-          handleDetailsPress(id);
+          handlePlacePress();
           setIsModalVisible(false);
         }}
       >
