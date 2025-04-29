@@ -96,7 +96,7 @@ const Map = () => {
     };
   }, []);
 
-  if (!places) return <ActivityIndicator />;
+  // if (!places) return <ActivityIndicator />;
   return (
     <View style={styles.container}>
       <YaMap
