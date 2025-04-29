@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Button,
   View,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useAppSelector } from "@/shared/hooks/hooks";
 import CommentsWidget from "@/widget/comments-widget/CommentsWidget";
@@ -25,20 +27,24 @@ export default function PlaceDetails() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: place.imageUrl }} style={styles.image} />
-      <Text style={styles.title}>{place.name}</Text>
-      <Text style={styles.location}>{place.location}</Text>
-      <Text style={styles.rating}>★ {place.rating}</Text>
-      <Text style={styles.description}>{place.description}</Text>
-      <AudioPlayer
-        audioSource={audioMap[place.name]}
-        showCard={false}
-        place={place}
-      />
-      <CommentsWidget foundPlace={place} />
-      {/* Аудиоплеер */}
-    </ScrollView>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image source={{ uri: place.imageUrl }} style={styles.image} />
+        <Text style={styles.title}>{place.name}</Text>
+        <Text style={styles.location}>{place.location}</Text>
+        <Text style={styles.rating}>★ {place.rating}</Text>
+        <Text style={styles.description}>{place.description}</Text>
+        <AudioPlayer
+          audioSource={audioMap[place.name]}
+          showCard={false}
+          place={place}
+        />
+        <CommentsWidget foundPlace={place} />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

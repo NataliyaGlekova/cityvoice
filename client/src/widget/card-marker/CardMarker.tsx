@@ -1,5 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { AudioPlayer } from "../player/AudioPlayer";
 import { router } from "expo-router";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
@@ -51,13 +58,19 @@ const CardMarker = (props: CardMarkerProps) => {
       <View style={styles.content}>
         <Text style={styles.title}>{name}</Text>
         <Text style={styles.location}>{location}</Text>
-        <Text style={styles.description}>{description}</Text>
+
+        <View style={{ maxHeight: 200, marginBottom: 16 }}>
+          <ScrollView style={styles.descriptionScroll}>
+            <Text style={styles.description}>{description}</Text>
+          </ScrollView>
+        </View>
+
         <View style={styles.ratingContainer}>
           <Text style={styles.rating}>★ {rating}</Text>
         </View>
       </View>
       <AudioPlayer
-        audioSource={audioMap[newPlace.name]}
+        audioSource={audioMap[newPlace?.name]}
         showCard={false}
         newPlace={place}
       />
@@ -94,9 +107,10 @@ const CardMarker = (props: CardMarkerProps) => {
 const styles = StyleSheet.create({
   card: {
     width: 380,
-    height: 600,
+    height: 600, // фиксированная высота
     backgroundColor: "#fff",
     borderRadius: 10,
+    paddingBottom: 120, // для кнопок
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -105,6 +119,7 @@ const styles = StyleSheet.create({
     margin: 10,
     overflow: "hidden",
   },
+
   image: {
     width: "100%",
     height: 200,
@@ -126,11 +141,12 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     lineHeight: 20,
-    marginBottom: 10,
+    marginBottom: 16, // увеличили для отступа перед рейтингом
   },
   ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 20, // добавили отступ перед кнопками
   },
   rating: {
     fontSize: 16,
@@ -138,13 +154,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   detailsButton: {
-    backgroundColor: "#00bcd4", // Аквамариновый оттенок
+    backgroundColor: "#00bcd4",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     position: "absolute",
     bottom: 20,
-    left: 120, // Центр экрана
+    left: 120,
   },
   detailsButtonText: {
     color: "#fff",
