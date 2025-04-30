@@ -73,6 +73,10 @@ export default function RootLayout() {
               options={{ headerShown: false, title: "" }}
             />
             <Stack.Screen
+              name="placelist"
+              options={{ title: "Места для посещения" }}
+            />
+            <Stack.Screen
               name="place/[id]"
               options={{
                 title: "Place Details",

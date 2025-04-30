@@ -15,7 +15,6 @@ import { fetchPlaces } from "@/entities/place/model/placeThunks";
 import { Place } from "@/entities/place/model/types";
 import { setActivePlace } from "@/entities/place/model/placeSlice";
 import { MaterialIcons } from "@expo/vector-icons"; // ← импорт иконок
-import { ScrollView } from "react-native-gesture-handler";
 
 export function PlacesList() {
   const dispatch = useAppDispatch();
@@ -80,7 +79,7 @@ export function PlacesList() {
       ListHeaderComponent={
         <>
           {" "}
-          <View style={{ height: 70 }} />
+          <View />
           <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
             <MaterialIcons
               name={isAscending ? "arrow-upward" : "arrow-downward"}
