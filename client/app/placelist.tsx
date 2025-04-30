@@ -4,7 +4,7 @@ import { View } from "react-native";
 export default function ProfileScreen() {
   return (
     <View style={{ flex: 1 }}>
-      <PlacesList />
+      <PlacesList category="place" />
     </View>
   );
 }
