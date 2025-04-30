@@ -1,5 +1,5 @@
-import { PlacesList } from "../../src/widget/places-list/PlacesList";
+import HomePage from "@/pages/home/HomePage";
 
 export default function Main() {
-  return <PlacesList category="place" />;
+  return <HomePage />;
 }

@@ -84,7 +84,7 @@ export function PlacesList({ category }: { category: string }) {
       ListHeaderComponent={
         <>
           {" "}
-          <View style={{ height: 70 }} />
+          <View />
           <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
             <MaterialIcons
               name={isAscending ? "arrow-upward" : "arrow-downward"}
