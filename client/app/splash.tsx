@@ -1,4 +1,3 @@
-// app/splash/index.js
 import { useEffect } from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
@@ -8,7 +7,7 @@ export default function SplashScreen() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace("/"); // перенаправляем на главный таб
+      router.replace(`/main`); // перенаправляем на главный таб
     }, 2000); // 2 секунды
 
     return () => clearTimeout(timer);

@@ -103,11 +103,11 @@ const Map = () => {
 
   const centerMapOnUser = () => {
     if (userLocation && mapRef.current) {
-      const targetZoom = 16;
+      const targetZoom = 10;
       mapRef.current.setCenter(
         { lat: userLocation.lat, lon: userLocation.lon },
         zoomLevel,
-        0.5
+        1
       );
       setZoomLevel(targetZoom);
     }

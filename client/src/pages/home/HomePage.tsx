@@ -1,4 +1,3 @@
-import { useAppDispatch } from "@/shared/hooks/hooks";
 import { router } from "expo-router";
 import React from "react";
 import {
@@ -7,11 +6,10 @@ import {
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
+  Image,
 } from "react-native";
 
 const HomePage = () => {
-  const dispatch = useAppDispatch();
-
   const handlePlacePress = () => {
     router.push(`/placelist`);
   };
@@ -32,6 +30,13 @@ const HomePage = () => {
         <Text style={styles.title}>Интересные факты</Text>
         <Text style={styles.description}>Подборка интересных фактов.</Text>
       </TouchableOpacity>
+      <View style={styles.advertContainer}>
+        <Image
+          style={styles.advert}
+          source={require("../../../assets/advert.gif")}
+        />
+        <Text style={styles.advertText}>Место для рекламы</Text>
+      </View>
     </SafeAreaView>
   );
 };
@@ -72,6 +77,28 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: "#666",
+  },
+  advertContainer: {
+    position: "relative",
+    width: "100%",
+    height: 200, // или нужная высота
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  advert: {
+    width: "92%",
+    resizeMode: "cover",
+    borderRadius: 12,
+    marginTop: 250,
+  },
+  advertText: {
+    position: "absolute",
+    color: "#fff",
+    fontSize: 25,
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.7)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 4,
   },
 });
 
