@@ -12,4 +12,13 @@ apiRouter.get('/markers', async (req, res) => {
   }
 });
 
+apiRouter.get('/markers/:id', async (req, res) => {
+  try {
+    const marker = await MarkerService.getMarkerById(req.params.id);
+    res.json(marker);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
 module.exports = apiRouter;
