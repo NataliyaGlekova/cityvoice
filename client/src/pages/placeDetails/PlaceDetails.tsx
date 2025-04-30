@@ -12,6 +12,7 @@ import { useAppSelector } from '@/shared/hooks/hooks';
 import { AudioPlayer } from '../../widget/player/AudioPlayer';
 import { audioMap } from '../../shared/utils/audioMap';
 import { EntityT } from '@/entities/place/model/shema';
+import CommentsWidget from '@/widget/comments-widget/CommentsWidget';
 
 export default function PlaceDetails() {
   const place = useAppSelector((state) => state.markers.activePlace);
@@ -89,6 +90,7 @@ export default function PlaceDetails() {
         showCard={false}
         place={place}
       />
+      <CommentsWidget foundPlace={place} />
       <Modal
         animationType="fade"
         transparent={true}
