@@ -8,13 +8,9 @@ import {
   ViewStyle,
   Modal,
   ActivityIndicator,
+  Image,
 } from "react-native";
-import YaMap, {
-  Marker,
-  Point,
-  Polyline,
-  RoutesFoundEvent,
-} from "react-native-yamap";
+import YaMap, { Marker, Point, Polyline } from "react-native-yamap";
 import CardMarker from "../card-marker/CardMarker";
 import { PlaceT } from "@/entities/place/model/shema";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
@@ -23,7 +19,6 @@ import {
   setActivePlace,
   setIsModalVisible,
 } from "@/entities/place/model/placeSlice";
-import { RouteResponse } from "./types/type";
 import { useUserLocation } from "@/shared/hooks/useUserLocation";
 
 const Map = () => {
@@ -180,7 +175,10 @@ const Map = () => {
           </TouchableOpacity>
         )}
         <TouchableOpacity style={styles.locateButton} onPress={centerMapOnUser}>
-          <Text style={styles.zoomText}>📍</Text>
+          <Image
+            source={require("../../../assets/button-nav.png")}
+            style={{ width: 24, resizeMode: "contain" }}
+          />
         </TouchableOpacity>
         <TouchableOpacity style={styles.zoomButton} onPress={increaseZoom}>
           <Text style={styles.zoomText}>+</Text>
