@@ -21,4 +21,5 @@ export type PlaceSliceT = {
   places: PlaceArrayT;
   loading: boolean;
   activePlace: PlaceT | null;
+  isModalVisible: boolean;
 };

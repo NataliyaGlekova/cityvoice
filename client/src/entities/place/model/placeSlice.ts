@@ -6,6 +6,7 @@ const initialState: PlaceSliceT = {
   places: [],
   loading: false,
   activePlace: null,
+  isModalVisible: false,
 };
 
 export const placeSlice = createSlice({
@@ -14,6 +15,9 @@ export const placeSlice = createSlice({
   reducers: {
     setActivePlace: (state, action) => {
       state.activePlace = action.payload;
+    },
+    setIsModalVisible: (state, action) => {
+      state.isModalVisible = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -30,5 +34,5 @@ export const placeSlice = createSlice({
   },
 });
 
-export const { setActivePlace } = placeSlice.actions;
+export const { setActivePlace, setIsModalVisible } = placeSlice.actions;
 export default placeSlice.reducer;

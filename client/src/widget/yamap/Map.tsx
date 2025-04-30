@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -9,30 +9,44 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
-import YaMap, { Marker, Polyline } from "react-native-yamap";
+import YaMap, {
+  Marker,
+  Point,
+  Polyline,
+  RoutesFoundEvent,
+} from "react-native-yamap";
 import CardMarker from "../card-marker/CardMarker";
 import { PlaceT } from "@/entities/place/model/shema";
-import { useAppSelector } from "@/shared/hooks/hooks";
-import Geolocation from "@react-native-community/geolocation";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
 import { useYaMapInit } from "@/shared/hooks/useYaMapInit";
+import {
+  setActivePlace,
+  setIsModalVisible,
+} from "@/entities/place/model/placeSlice";
+import { RouteResponse } from "./types/type";
+import { useUserLocation } from "@/shared/hooks/useUserLocation";
 
 const Map = () => {
   const [zoomLevel, setZoomLevel] = useState(10);
-  const mapRef = useRef<any>(null);
+  const mapRef = useRef<YaMap | null>(null);
+
   const places = useAppSelector((state) => state.markers.places);
 
-  const [isModalVisible, setIsModalVisible] = useState(false); // Состояние для отображения модального окна
+  // Состояние для отображения модального окна
+  const dispatch = useAppDispatch();
+  const isModalVisible = useAppSelector(
+    (state) => state.markers.isModalVisible
+  );
+  // Состояние геолокации
+  const { userLocation, setUserLocation } = useUserLocation();
+
   const [currentPlace, setCuurentId] = useState<PlaceT | null>(null); // Состояние для отображения модального окна
   const [selectedPlace, setSelectedPlace] = useState<any>(null); // Состояние для выбранного места
-  const [routePoints, setRoutePoints] = useState([]);
-
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lon: number;
-  } | null>(null);
+  const [routePoints, setRoutePoints] = useState<Point[]>([]);
 
   const isYamapReady = useYaMapInit();
 
+  // Состояние масштабирования
   const increaseZoom = () => {
     if (mapRef.current && zoomLevel < 18) {
       const newZoom = zoomLevel + 1;
@@ -51,7 +65,7 @@ const Map = () => {
 
   const handleMarkerPress = (place: any) => {
     setSelectedPlace(place);
-    setIsModalVisible(true); // Открываем модальное окно
+    dispatch(setIsModalVisible(true));
   };
 
   const handleBuildRoute = (destination: {
@@ -59,7 +73,7 @@ const Map = () => {
     coordinates: { lat: number; lon: number };
   }) => {
     if (userLocation && destination) {
-      mapRef.current.findPedestrianRoutes(
+      mapRef.current?.findPedestrianRoutes(
         [
           { lat: userLocation.lat, lon: userLocation.lon },
           {
@@ -70,9 +84,10 @@ const Map = () => {
         (routesEvent) => {
           if (routesEvent && routesEvent.routes.length > 0) {
             const firstRoute = routesEvent.routes[0];
+            console.log(routesEvent);
 
             // Суммируем все точки из секций маршрута
-            const allPoints = firstRoute.sections.reduce(
+            const allPoints = firstRoute.sections.reduce<Point[]>(
               (acc, section) => acc.concat(section.points),
               []
             );
@@ -80,12 +95,6 @@ const Map = () => {
             // Ставим объединённые точки в состояние
             setRoutePoints(allPoints);
           }
-        },
-        (error) => {
-          console.error("Ошибка при поиске маршрута:", error.message);
-          alert(
-            "Возникла ошибка при построении маршрута. Проверьте подключение к Интернету и повторите попытку."
-          );
         }
       );
     } else {
@@ -93,41 +102,20 @@ const Map = () => {
     }
   };
 
-  useEffect(() => {
-    // Получаем геолокацию пользователя с флагом для принудительного использования актуальных данных
-    Geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log("Полученные координаты: ", latitude, longitude); // Логируем координаты
-        setUserLocation({ lat: latitude, lon: longitude });
-      },
-      (error) => {
-        console.log("Ошибка получения геолокации: ", error);
-      },
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 } // maximumAge: 0 для актуальных данных
-    );
-
-    // Отслеживание местоположения в реальном времени
-    const watchId = Geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log("Текущие координаты: ", latitude, longitude); // Логируем координаты
-        setUserLocation({ lat: latitude, lon: longitude });
-      },
-      (error) => {
-        console.log("Ошибка отслеживания местоположения: ", error);
-      },
-      { enableHighAccuracy: true, distanceFilter: 10 }
-    );
-
-    // Очистка отслеживания при размонтировании компонента
-    return () => {
-      Geolocation.clearWatch(watchId);
-    };
-  }, []);
-
   const cancelRoute = () => {
     setRoutePoints([]); // Очищаем массив координат маршрута
+  };
+
+  const centerMapOnUser = () => {
+    if (userLocation && mapRef.current) {
+      const targetZoom = 16;
+      mapRef.current.setCenter(
+        { lat: userLocation.lat, lon: userLocation.lon },
+        zoomLevel,
+        0.5
+      );
+      setZoomLevel(targetZoom);
+    }
   };
 
   if (!places) return <ActivityIndicator />;
@@ -155,7 +143,7 @@ const Map = () => {
               scale={0.5} // Масштабирование иконки
               onPress={() => {
                 handleMarkerPress(place);
-
+                dispatch(setActivePlace(place));
                 setCuurentId(place);
               }} // Открытие модального окна при клике на маркер
             />
@@ -174,21 +162,11 @@ const Map = () => {
         <Modal
           animationType="fade"
           transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => setIsModalVisible(false)} // Закрытие модального окна
+          visible={isModalVisible} // Состояние отображения модального окна
+          onRequestClose={() => dispatch(setIsModalVisible(false))} // Закрытие модального окна
         >
           <View style={styles.modalBackground}>
-            <CardMarker
-              imageUrl={currentPlace?.imageUrl || ""}
-              name={currentPlace?.name || ""}
-              description={currentPlace?.description || ""}
-              rating={currentPlace?.rating || 0}
-              location={currentPlace?.location || ""}
-              coordinates={{ lat: currentPlace?.lat, lon: currentPlace?.lon }}
-              setIsModalVisible={setIsModalVisible}
-              onBuildRoute={handleBuildRoute}
-              place={currentPlace!}
-            />
+            <CardMarker onBuildRoute={handleBuildRoute} />
           </View>
         </Modal>
       )}
@@ -201,6 +179,9 @@ const Map = () => {
             <Text style={styles.buttonText}>Х</Text>
           </TouchableOpacity>
         )}
+        <TouchableOpacity style={styles.locateButton} onPress={centerMapOnUser}>
+          <Text style={styles.zoomText}>📍</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.zoomButton} onPress={increaseZoom}>
           <Text style={styles.zoomText}>+</Text>
         </TouchableOpacity>
@@ -221,7 +202,7 @@ const styles = StyleSheet.create({
   map: Platform.select({
     ios: {
       width: "100%",
-      height: 770, // Устанавливаем фиксированную высоту для iOS
+      height: "100%", // Устанавливаем фиксированную высоту для iOS
     },
     android: {
       width: "100%",
@@ -306,6 +287,16 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 14,
+  },
+  locateButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: "rgba(0,122,255,0.7)",
+    padding: 10,
+    marginTop: 5,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

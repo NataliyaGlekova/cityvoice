@@ -80,7 +80,6 @@ export function PlacesList() {
       ListHeaderComponent={
         <>
           {" "}
-          {/* Сюда переместим верхнюю часть контента */}
           <View style={{ height: 70 }} />
           <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
             <MaterialIcons
