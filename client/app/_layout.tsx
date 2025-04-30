@@ -85,7 +85,7 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
-              name="category/[id]"
+              name="/categoryList/[category]"
               options={{
                 title: "Category Details",
                 headerBackVisible: true,
