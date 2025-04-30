@@ -11,45 +11,49 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { useAppSelector, useAppDispatch } from "@/shared/hooks/hooks";
-import { fetchPlaces } from "@/entities/place/model/placeThunks";
+import {
+  fetchCategoryPlaces,
+  fetchPlaces,
+} from "@/entities/place/model/placeThunks";
 import { Place } from "@/entities/place/model/types";
 import { setActivePlace } from "@/entities/place/model/placeSlice";
 import { MaterialIcons } from "@expo/vector-icons"; // ← импорт иконок
 import { ScrollView } from "react-native-gesture-handler";
+import { PlaceT } from "@/entities/place/model/shema";
 
-export function PlacesList() {
+export function PlacesList({ category }: { category: string }) {
   const dispatch = useAppDispatch();
-  const places = useAppSelector((state) => state.markers.places);
+  const activePlaces = useAppSelector((state) => state.markers.activePlaces);
   const [sortedPlaces, setSortedPlaces] = useState<Place[]>([]);
   const [isAscending, setIsAscending] = useState(true);
 
   // Загрузка данных из Redux
   useEffect(() => {
-    dispatch(fetchPlaces());
+    dispatch(fetchCategoryPlaces(category));
   }, [dispatch]);
 
   // Сортировка при изменении isAscending или places
   useEffect(() => {
-    if (places) {
-      const sorted = [...places].sort((a, b) => {
+    if (activePlaces) {
+      const sorted = [...activePlaces].sort((a, b) => {
         return isAscending ? a.rating - b.rating : b.rating - a.rating;
       });
       setSortedPlaces(sorted);
     }
-  }, [isAscending, places]);
+  }, [isAscending, activePlaces]);
 
   // Функция для сортировки
   const toggleSortOrder = () => {
     setIsAscending((prev) => !prev);
   };
 
-  const handlePlacePress = (place: Place) => {
+  const handlePlacePress = (place: PlaceT) => {
     dispatch(setActivePlace(place));
     router.push(`/place/${place.id}`);
   };
 
   // Обработка пустого списка
-  if (!places || places.length === 0) {
+  if (!activePlaces || activePlaces.length === 0) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Места не найдены</Text>

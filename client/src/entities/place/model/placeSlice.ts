@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { PlaceSliceT } from "./shema";
-import { fetchPlaces } from "./placeThunks";
+import { fetchPlaces, fetchCategoryPlaces } from "./placeThunks";
 
 const initialState: PlaceSliceT = {
   places: [],
   loading: false,
   activePlace: null,
   isModalVisible: false,
+  activePlaces: [],
 };
 
 export const placeSlice = createSlice({
@@ -29,6 +30,16 @@ export const placeSlice = createSlice({
       state.loading = false;
     });
     builder.addCase(fetchPlaces.rejected, (state, action) => {
+      state.loading = false;
+    });
+    builder.addCase(fetchCategoryPlaces.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchCategoryPlaces.fulfilled, (state, action) => {
+      state.activePlaces = action.payload;
+      state.loading = false;
+    });
+    builder.addCase(fetchCategoryPlaces.rejected, (state, action) => {
       state.loading = false;
     });
   },

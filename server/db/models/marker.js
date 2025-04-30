@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Marker.init(
     {
+      category: DataTypes.STRING,
       lat: DataTypes.FLOAT,
       lon: DataTypes.FLOAT,
       name: DataTypes.STRING,

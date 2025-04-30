@@ -14,7 +14,7 @@ export default function MapScreen() {
   const dispatch = useAppDispatch();
   const places = useAppSelector((state) => state.markers.places);
   useEffect(() => {
-    void dispatch(fetchPlaces());
+    void dispatch(fetchPlaces("place"));
   }, []);
 
   if (places?.length === 0) return <ActivityIndicator />;

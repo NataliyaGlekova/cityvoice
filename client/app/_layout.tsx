@@ -80,6 +80,14 @@ export default function RootLayout() {
                 headerBackTitle: "", // лишним не будет
               }}
             />
+            <Stack.Screen
+              name="category/[id]"
+              options={{
+                title: "Category Details",
+                headerBackVisible: true,
+                headerBackTitle: "", // лишним не будет
+              }}
+            />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>

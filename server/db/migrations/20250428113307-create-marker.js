@@ -10,6 +10,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      category: {
+        type: Sequelize.STRING,
+      },
       lat: {
         type: Sequelize.FLOAT,
       },

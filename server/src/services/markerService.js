@@ -1,9 +1,9 @@
 const { Marker } = require('../../db/models/');
 
 class MarkerService {
-  static async getAllMarkers() {
+  static async getAllMarkers(category = 'place') {
     try {
-      const markers = await Marker.findAll();
+      const markers = await Marker.findAll({ where: { category } });
       return markers;
     } catch (error) {
       console.error('Error fetching markers:', error);
