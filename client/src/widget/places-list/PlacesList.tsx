@@ -18,14 +18,14 @@ import {
 import { Place } from "@/entities/place/model/types";
 import { setActivePlace } from "@/entities/place/model/placeSlice";
 import { MaterialIcons } from "@expo/vector-icons"; // ← импорт иконок
-import { ScrollView } from "react-native-gesture-handler";
-import { PlaceT } from "@/entities/place/model/shema";
 
 export function PlacesList({ category }: { category: string }) {
   const dispatch = useAppDispatch();
-  const activePlaces = useAppSelector((state) => state.markers.activePlaces);
+  // const places = useAppSelector((state) => state.markers.places);
+  const places = useAppSelector((state) => state.markers.activePlaces);
   const [sortedPlaces, setSortedPlaces] = useState<Place[]>([]);
   const [isAscending, setIsAscending] = useState(true);
+  console.log("Зашло на страницу");
 
   // Загрузка данных из Redux
   useEffect(() => {
@@ -34,26 +34,28 @@ export function PlacesList({ category }: { category: string }) {
 
   // Сортировка при изменении isAscending или places
   useEffect(() => {
-    if (activePlaces) {
-      const sorted = [...activePlaces].sort((a, b) => {
+    console.log("Сортировка вызвана" + places);
+
+    if (places) {
+      const sorted = [...places].sort((a, b) => {
         return isAscending ? a.rating - b.rating : b.rating - a.rating;
       });
       setSortedPlaces(sorted);
     }
-  }, [isAscending, activePlaces]);
+  }, [isAscending, places]);
 
   // Функция для сортировки
   const toggleSortOrder = () => {
     setIsAscending((prev) => !prev);
   };
 
-  const handlePlacePress = (place: PlaceT) => {
+  const handlePlacePress = (place: Place) => {
     dispatch(setActivePlace(place));
     router.push(`/place/${place.id}`);
   };
 
   // Обработка пустого списка
-  if (!activePlaces || activePlaces.length === 0) {
+  if (!places || places.length === 0) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Места не найдены</Text>
@@ -67,7 +69,7 @@ export function PlacesList({ category }: { category: string }) {
       data={sortedPlaces}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <>
+        <View style={{ flex: 1 }}>
           <TouchableOpacity
             style={styles.card}
             onPress={() => handlePlacePress(item)}
@@ -79,10 +81,10 @@ export function PlacesList({ category }: { category: string }) {
               <Text style={styles.rating}>★ {item.rating}</Text>
             </View>
           </TouchableOpacity>
-        </>
+        </View>
       )}
       ListHeaderComponent={
-        <>
+        <View style={{ flex: 1 }}>
           {" "}
           <View />
           <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
@@ -95,7 +97,7 @@ export function PlacesList({ category }: { category: string }) {
               Сортировка по рейтингу: {isAscending ? "по возрастанию" : "по убыванию"}
             </Text>
           </TouchableOpacity>
-        </>
+        </View>
       }
       ListFooterComponent={<View style={{ height: 70 }} />}
       contentContainerStyle={styles.listContent}
