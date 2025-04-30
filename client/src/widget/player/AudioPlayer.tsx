@@ -23,41 +23,54 @@ export function AudioPlayer({
 }: AudioPlayerProps) {
   const soundRef = useRef<Audio.Sound | null>(null);
   const [position, setPosition] = useState(0);
-  const [duration, setDuration] = useState(1);
+  const [duration, setDuration] = useState(0); // Изначально 0, пока аудио не загружено
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false); // Флаг загрузки аудио
 
   const updateStatus = async () => {
-    const status = await soundRef.current?.getStatusAsync();
+    if (!soundRef.current) return;
+    const status = await soundRef.current.getStatusAsync();
     if (status && "isLoaded" in status && status.isLoaded) {
       setPosition(status.positionMillis / 1000);
-      setDuration(status.durationMillis ? status.durationMillis / 1000 : 1);
+      setDuration(status.durationMillis ? status.durationMillis / 1000 : 0);
       setIsPlaying(status.isPlaying);
     }
   };
 
   useEffect(() => {
-    const interval = setInterval(updateStatus, 500);
-    return () => {
-      clearInterval(interval);
-      if (soundRef.current) {
-        soundRef.current.unloadAsync();
+    const loadAudio = async () => {
+      if (!audioSource) return;
+      try {
+        const { sound } = await Audio.Sound.createAsync(audioSource);
+        soundRef.current = sound;
+        const status = await sound.getStatusAsync();
+        if (status && "isLoaded" in status && status.isLoaded) {
+          setDuration(status.durationMillis ? status.durationMillis / 1000 : 0);
+          setIsLoaded(true);
+        }
+      } catch (error) {
+        console.error("Error loading audio:", error);
       }
     };
-  }, []);
 
-  const loadAndPlay = async () => {
-    if (!audioSource) return;
-    const { sound } = await Audio.Sound.createAsync(audioSource);
-    soundRef.current = sound;
-    await sound.playAsync();
-    setIsPlaying(true);
-  };
+    loadAudio();
+
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+    };
+  }, [audioSource]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    const interval = setInterval(updateStatus, 500);
+    return () => clearInterval(interval);
+  }, [isLoaded]);
 
   const togglePlayback = async () => {
-    if (!soundRef.current) {
-      await loadAndPlay();
-      return;
-    }
+    if (!soundRef.current) return;
     const status = await soundRef.current.getStatusAsync();
     if ("isPlaying" in status) {
       if (status.isPlaying) {
@@ -85,7 +98,7 @@ export function AudioPlayer({
 
   return (
     <ThemedView style={styles.container}>
-      {showCard && place && <PlaceCard place={place} />}
+      {/* {showCard && place && <PlaceCard place={place} />} */}
 
       {audioSource && (
         <View style={styles.playerContainer}>

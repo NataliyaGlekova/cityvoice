@@ -3,7 +3,16 @@ const { Marker, Entity } = require('../../db/models/');
 class MarkerService {
   static async getAllMarkers(category = 'place') {
     try {
-      const markers = await Marker.findAll({ where: { category } });
+      const markers = await Marker.findAll({
+        where: { category },
+        include: [
+          {
+            model: Entity,
+            through: { attributes: [] },
+            attributes: ['id', 'name', 'description'],
+          },
+        ],
+      });
       return markers;
     } catch (error) {
       console.error('Error fetching markers:', error);
