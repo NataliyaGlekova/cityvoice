@@ -94,7 +94,7 @@ export function PlacesList({ category }: { category: string }) {
               color="#000"
             />
             <Text style={styles.sortText}>
-              Сортировка: {isAscending ? "по возрастанию" : "по убыванию"}
+              Сортировка по рейтингу: {isAscending ? "по возрастанию" : "по убыванию"}
             </Text>
           </TouchableOpacity>
         </View>
