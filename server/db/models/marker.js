@@ -10,10 +10,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Marker.hasMany(models.Comment, { foreignKey: 'markerId' });
+      Marker.belongsToMany(models.Entity, {
+        through: 'MarkerEntity',
+        foreignKey: 'markerId',
+        otherKey: 'entityId',
+      });
     }
   }
   Marker.init(
     {
+      category: DataTypes.STRING,
       lat: DataTypes.FLOAT,
       lon: DataTypes.FLOAT,
       name: DataTypes.STRING,
@@ -25,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'Marker',
+      tableName: 'Markers',
     },
   );
   return Marker;

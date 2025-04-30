@@ -11,24 +11,31 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { useAppSelector, useAppDispatch } from "@/shared/hooks/hooks";
-import { fetchPlaces } from "@/entities/place/model/placeThunks";
+import {
+  fetchCategoryPlaces,
+  fetchPlaces,
+} from "@/entities/place/model/placeThunks";
 import { Place } from "@/entities/place/model/types";
 import { setActivePlace } from "@/entities/place/model/placeSlice";
 import { MaterialIcons } from "@expo/vector-icons"; // ← импорт иконок
 
-export function PlacesList() {
+export function PlacesList({ category }: { category: string }) {
   const dispatch = useAppDispatch();
-  const places = useAppSelector((state) => state.markers.places);
+  // const places = useAppSelector((state) => state.markers.places);
+  const places = useAppSelector((state) => state.markers.activePlaces);
   const [sortedPlaces, setSortedPlaces] = useState<Place[]>([]);
   const [isAscending, setIsAscending] = useState(true);
+  console.log("Зашло на страницу");
 
   // Загрузка данных из Redux
   useEffect(() => {
-    dispatch(fetchPlaces());
+    dispatch(fetchCategoryPlaces(category));
   }, [dispatch]);
 
   // Сортировка при изменении isAscending или places
   useEffect(() => {
+    console.log("Сортировка вызвана" + places);
+
     if (places) {
       const sorted = [...places].sort((a, b) => {
         return isAscending ? a.rating - b.rating : b.rating - a.rating;
@@ -62,7 +69,7 @@ export function PlacesList() {
       data={sortedPlaces}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <>
+        <View style={{ flex: 1 }}>
           <TouchableOpacity
             style={styles.card}
             onPress={() => handlePlacePress(item)}
@@ -74,10 +81,10 @@ export function PlacesList() {
               <Text style={styles.rating}>★ {item.rating}</Text>
             </View>
           </TouchableOpacity>
-        </>
+        </View>
       )}
       ListHeaderComponent={
-        <>
+        <View style={{ flex: 1 }}>
           {" "}
           <View />
           <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
@@ -87,10 +94,10 @@ export function PlacesList() {
               color="#000"
             />
             <Text style={styles.sortText}>
-              Сортировка: {isAscending ? "по возрастанию" : "по убыванию"}
+              Сортировка по рейтингу: {isAscending ? "по возрастанию" : "по убыванию"}
             </Text>
           </TouchableOpacity>
-        </>
+        </View>
       }
       ListFooterComponent={<View style={{ height: 70 }} />}
       contentContainerStyle={styles.listContent}

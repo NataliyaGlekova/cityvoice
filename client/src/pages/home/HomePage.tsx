@@ -13,6 +13,7 @@ const HomePage = () => {
   const handlePlacePress = () => {
     router.push(`/placelist`);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -22,7 +23,10 @@ const HomePage = () => {
         <Text style={styles.title}>Места для посещения</Text>
         <Text style={styles.description}>Список мест для посещения</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => router.push("/categoryList/rest")}
+      >
         <Text style={styles.title}>Где поесть?</Text>
         <Text style={styles.description}>Подборка вкусных мест.</Text>
       </TouchableOpacity>
@@ -64,6 +68,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     elevation: 3, // Android shadow
     shadowColor: "#000", // iOS shadow
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
