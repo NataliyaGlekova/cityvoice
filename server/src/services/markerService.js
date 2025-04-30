@@ -1,17 +1,9 @@
 const { Marker, Entity } = require('../../db/models/');
 
 class MarkerService {
-  static async getAllMarkers() {
+  static async getAllMarkers(category = 'place') {
     try {
-      const markers = await Marker.findAll({
-        include: [
-          {
-            model: Entity,
-            through: { attributes: [] }, // Исключаем атрибуты таблицы MarkerEntity
-            attributes: ['id', 'name', 'description'],
-          },
-        ],
-      });
+      const markers = await Marker.findAll({ where: { category } });
       return markers;
     } catch (error) {
       console.error('Error fetching markers:', error);

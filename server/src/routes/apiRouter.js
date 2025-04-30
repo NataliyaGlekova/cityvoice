@@ -4,7 +4,9 @@ const apiRouter = express.Router();
 
 apiRouter.get('/markers', async (req, res) => {
   try {
-    const markers = await MarkerService.getAllMarkers();
+    const category = req.query.category || 'place';
+    console.log(`Fetching markers for category: ${category}`);
+    const markers = await MarkerService.getAllMarkers(category);
     res.json(markers);
   } catch (error) {
     console.error('Error fetching markers:', error);

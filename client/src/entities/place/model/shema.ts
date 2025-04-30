@@ -8,6 +8,7 @@ export const EntitySchema = z.object({
 
 export const PlaceSchema = z.object({
   id: z.number(),
+  category: z.string(),
   name: z.string(),
   description: z.string(),
   location: z.string(),
@@ -32,4 +33,5 @@ export type PlaceSliceT = {
   loading: boolean;
   activePlace: PlaceT | null;
   isModalVisible: boolean;
+  activePlaces: PlaceArrayT;
 };
