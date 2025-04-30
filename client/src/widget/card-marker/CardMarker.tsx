@@ -1,78 +1,86 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { AudioPlayer } from "../player/AudioPlayer";
-import { router, useLocalSearchParams } from "expo-router";
-import { useAppDispatch } from "@/shared/hooks/hooks";
+import { router } from "expo-router";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
+import { setIsModalVisible } from "@/entities/place/model/placeSlice";
+import { audioMap } from "@/shared/utils/audioMap";
 
 export type CardMarkerProps = {
-  id: number;
-  imageUrl: string;
-  name: string;
-  description: string;
-  rating: number;
-  location: string;
-  coordinates: { lat?: number; lon?: number };
-  setIsModalVisible: (value: boolean) => void;
-  onBuildRoute?: (place: any) => void; // Новый пропс для обработки маршрута
+  onBuildRoute?: (place: any) => void;
 } | null;
 
 const CardMarker = (props: CardMarkerProps) => {
   if (!props) return null;
-  const {
-    id,
-    imageUrl,
-    name,
-    description,
-    rating,
-    coordinates,
-    location,
-    setIsModalVisible,
-    onBuildRoute,
-  } = props;
+  const { onBuildRoute } = props;
 
-  const handlePlacePress = (id: number) => {
-    console.log("Navigating to /place/", id);
-    router.push(`/place/${id}`);
+  const place = useAppSelector((state) => state.markers.activePlace);
+  const coordinates = { lat: place?.lat, lon: place?.lon };
+  const dispatch = useAppDispatch();
+
+  const handlePlacePress = () => {
+    router.push(`/place/${place?.id}`);
   };
 
   return (
     <View style={styles.card}>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
+      <Image source={{ uri: place?.imageUrl }} style={styles.image} />
+
       <View style={styles.content}>
-        <Text style={styles.title}>{name}</Text>
-        <Text style={styles.location}>{location}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.title}>{place?.name}</Text>
+        <Text style={styles.location}>{place?.location}</Text>
+
+        {/* Прокручиваемый блок описания */}
+        <View style={styles.descriptionWrapper}>
+          <ScrollView showsVerticalScrollIndicator={true}>
+            <Text style={styles.description}>{place?.description}</Text>
+          </ScrollView>
+        </View>
+
         <View style={styles.ratingContainer}>
-          <Text style={styles.rating}>★ {rating}</Text>
+          <Text style={styles.rating}>★ {place?.rating}</Text>
         </View>
       </View>
-      <AudioPlayer audioSource={require("../../../assets/audio/test.mp3")} />
-      <TouchableOpacity
-        style={styles.buildRouteButton}
-        onPress={() => {
-          if (typeof onBuildRoute === "function") {
-            onBuildRoute({ name, coordinates }); // Отправляем имя и расположение точки
-          }
-          setIsModalVisible(false);
-        }}
-      >
-        <Text style={styles.buildRouteButtonText}>Маршрут</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.closeButton}
-        onPress={() => setIsModalVisible(false)}
-      >
-        <Text style={styles.routeButtonText}>Закрыть</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.routeButton}
-        onPress={() => {
-          handlePlacePress(id);
-          setIsModalVisible(false);
-        }}
-      >
-        <Text style={styles.closeButtonText}>Подробнее</Text>
-      </TouchableOpacity>
+
+      <AudioPlayer audioSource={audioMap[place?.name || ""]} showCard={false} />
+
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          style={[styles.button, styles.routeButton]}
+          onPress={() => {
+            if (typeof onBuildRoute === "function") {
+              onBuildRoute({ name: place?.name, coordinates }); // Отправляем имя и расположение точки
+            }
+            dispatch(setIsModalVisible(false));
+          }}
+        >
+          <Text style={styles.buttonText}>Маршрут</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.detailsButton]}
+          onPress={() => {
+            handlePlacePress();
+            dispatch(setIsModalVisible(false));
+          }}
+        >
+          <Text style={styles.buttonText}>Подробнее</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.closeButton]}
+          onPress={() => dispatch(setIsModalVisible(false))}
+        >
+          <Text style={styles.buttonText}>Закрыть</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -80,21 +88,19 @@ const CardMarker = (props: CardMarkerProps) => {
 const styles = StyleSheet.create({
   card: {
     width: 380,
-    height: 600,
+    height: 650,
     backgroundColor: "#fff",
     borderRadius: 10,
+    overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    margin: 10,
-    overflow: "hidden",
   },
   image: {
     width: "100%",
     height: 200,
-    resizeMode: "cover",
   },
   content: {
     padding: 15,
@@ -102,65 +108,64 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 5,
   },
   location: {
     fontSize: 16,
     color: "#666",
+    marginBottom: 15,
+  },
+  descriptionWrapper: {
+    maxHeight: 100,
     marginBottom: 10,
   },
   description: {
     fontSize: 14,
     lineHeight: 20,
-    marginBottom: 10,
   },
   ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 5,
   },
   rating: {
     fontSize: 16,
-    color: "#FFD700",
     fontWeight: "bold",
+    color: "#FFD700",
   },
-  closeButton: {
-    backgroundColor: "#007BFF",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+  buttonsContainer: {
     position: "absolute",
-    bottom: 20,
-    left: 10,
+    bottom: 10,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: 10,
   },
-  closeButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  buildRouteButton: {
-    backgroundColor: "#2196f3", // Более насыщенный синий оттенок
+
+  button: {
+    flex: 1,
+    marginHorizontal: 5,
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    position: "absolute",
-    bottom: 20,
-    right: 15, // Переносим вправо
+    borderRadius: 6,
+    alignItems: "center",
   },
-  buildRouteButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
+
   routeButton: {
-    backgroundColor: "#00bcd4", // Яркий аквамариновый оттенок
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    position: "absolute",
-    bottom: 20,
-    left: 120, // Центральное положение слева направо
+    backgroundColor: "#4CAF50", // зелёный
   },
-  routeButtonText: {
+
+  closeButton: {
+    backgroundColor: "#F44336", // красный
+  },
+
+  detailsButton: {
+    backgroundColor: "#2196F3", // синий
+  },
+
+  buttonText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "600",
   },
 });
 

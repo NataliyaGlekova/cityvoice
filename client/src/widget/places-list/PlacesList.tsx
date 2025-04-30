@@ -15,7 +15,6 @@ import { fetchPlaces } from "@/entities/place/model/placeThunks";
 import { Place } from "@/entities/place/model/types";
 import { setActivePlace } from "@/entities/place/model/placeSlice";
 import { MaterialIcons } from "@expo/vector-icons"; // ← импорт иконок
-import { ScrollView } from "react-native-gesture-handler";
 
 export function PlacesList() {
   const dispatch = useAppDispatch();
@@ -58,22 +57,12 @@ export function PlacesList() {
   }
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <View style={{ height: 70 }} />
-      <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
-        <MaterialIcons
-          name={isAscending ? "arrow-upward" : "arrow-downward"}
-          size={20}
-          color="#000"
-        />
-        <Text style={styles.sortText}>
-          Сортировка: {isAscending ? "по возрастанию" : "по убыванию"}
-        </Text>
-      </TouchableOpacity>
-      <FlatList
-        data={sortedPlaces}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+    <FlatList
+      style={{ flex: 1 }}
+      data={sortedPlaces}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <>
           <TouchableOpacity
             style={styles.card}
             onPress={() => handlePlacePress(item)}
@@ -85,11 +74,27 @@ export function PlacesList() {
               <Text style={styles.rating}>★ {item.rating}</Text>
             </View>
           </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.listContent}
-      />
-      <View style={{ height: 70 }} />
-    </ScrollView>
+        </>
+      )}
+      ListHeaderComponent={
+        <>
+          {" "}
+          <View />
+          <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
+            <MaterialIcons
+              name={isAscending ? "arrow-upward" : "arrow-downward"}
+              size={20}
+              color="#000"
+            />
+            <Text style={styles.sortText}>
+              Сортировка: {isAscending ? "по возрастанию" : "по убыванию"}
+            </Text>
+          </TouchableOpacity>
+        </>
+      }
+      ListFooterComponent={<View style={{ height: 70 }} />}
+      contentContainerStyle={styles.listContent}
+    />
   );
 }
 
@@ -122,6 +127,10 @@ const styles = StyleSheet.create({
     elevation: 3,
     flexDirection: "row",
     alignItems: "center",
+    shadowColor: "#000", // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
   image: {
     width: 100,
