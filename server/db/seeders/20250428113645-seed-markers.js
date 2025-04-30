@@ -145,7 +145,7 @@ module.exports = {
       {
         lat: 55.916627,
         lon: 36.857408,
-        name: '../../../assets/audio/Воскресенский Ново-Иерусалимский монастырь.mp3'',
+        name: 'Истринский культурно-досуговый комплекс',
         imageUrl:
           'https://avatars.mds.yandex.net/get-altay/1773749/2a0000016ae3276d772d8c3bed9ce9e5d24d/XXXL',
         description:
