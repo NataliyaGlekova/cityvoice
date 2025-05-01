@@ -30,7 +30,7 @@ const HomePage = () => {
         <Text style={styles.title}>Где поесть?</Text>
         <Text style={styles.description}>Подборка вкусных мест.</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={() => router.push("/aiHelper")}>
         <Text style={styles.title}>Интересные факты</Text>
         <Text style={styles.description}>Подборка интересных фактов.</Text>
       </TouchableOpacity>
