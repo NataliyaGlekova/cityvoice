@@ -41,16 +41,25 @@ export default function AiInfo() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={fetchFact}
-        disabled={isLoading}
-      >
-        <Text style={styles.buttonText}>
-          {isLoading ? "Loading..." : "Интересные факты об Истре"}
-        </Text>
-      </TouchableOpacity>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        facts.length > 0 && styles.containerWithFacts,
+      ]}
+    >
+      {facts.length === 0 && (
+        <View style={styles.emptyContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={fetchFact}
+            disabled={isLoading}
+          >
+            <Text style={styles.buttonText}>
+              {isLoading ? "Loading..." : "Интересные факты об Истре"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {facts.map((fact, index) => (
         <Animated.View
@@ -60,17 +69,38 @@ export default function AiInfo() {
           <Markdown style={markdownStyles}>{fact}</Markdown>
         </Animated.View>
       ))}
+
+      {facts.length > 0 && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={fetchFact}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>
+            {isLoading ? "Loading..." : "Получить еще один факт"}
+          </Text>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
     padding: 20,
     alignItems: "center",
   },
+  containerWithFacts: {
+    justifyContent: "flex-start",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#000000",
     padding: 15,
     borderRadius: 10,
     shadowColor: "#000",
@@ -81,6 +111,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    marginVertical: 20,
   },
   buttonText: {
     color: "white",
