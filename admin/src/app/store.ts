@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "../entities/user/model/userSlice";
+import placeReducer from "../entities/places/model/placesSlice";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    place: placeReducer,
   },
 });
 
