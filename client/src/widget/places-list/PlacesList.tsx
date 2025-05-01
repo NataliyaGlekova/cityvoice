@@ -85,7 +85,6 @@ export function PlacesList({ category }: { category: string }) {
       )}
       ListHeaderComponent={
         <View style={{ flex: 1 }}>
-          {" "}
           <View />
           <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
             <MaterialIcons
