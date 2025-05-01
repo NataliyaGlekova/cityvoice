@@ -49,24 +49,28 @@ export default function PlaceDetails() {
       parts = newParts;
     });
 
-    return parts.map((part, index) => {
-      if (typeof part === 'string') {
-        return <Text key={index} style={styles.description}>{part}</Text>;
-      }
-      return (
-        <Text
-          key={index}
-          style={[styles.description, styles.entityText]}
-          onPress={() => {
-            setSelectedEntity(part.entity);
-            setModalVisible(true);
-          }}
-        >
-          {part.text}
+    return (
+        <Text style={styles.description}>
+          {parts.map((part, index) => {
+            if (typeof part === 'string') {
+              return part;
+            }
+            return (
+              <Text
+                key={index}
+                style={styles.entityText}
+                onPress={() => {
+                  setSelectedEntity(part.entity);
+                  setModalVisible(true);
+                }}
+              >
+                {part.text}
+              </Text>
+            );
+          })}
         </Text>
       );
-    });
-  };
+    };
 
   if (!place) {
     return (

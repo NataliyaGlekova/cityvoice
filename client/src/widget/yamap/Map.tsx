@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   Image,
 } from "react-native";
-import YaMap, { Marker, Point, Polyline } from "react-native-yamap";
+// import YaMap, { Marker, Point, Polyline } from "react-native-yamap";
 import CardMarker from "../card-marker/CardMarker";
 import { PlaceT } from "@/entities/place/model/shema";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/hooks";
