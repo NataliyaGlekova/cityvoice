@@ -23,4 +23,31 @@ apiRouter.get('/markers/:id', async (req, res) => {
   }
 });
 
+apiRouter.put('/markers/:id', async (req, res) => {
+  try {
+    const marker = await MarkerService.editMarker(req.params.id, req.body);
+    res.json(marker);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+apiRouter.post('/markers', async (req, res) => {
+  try {
+    const marker = await MarkerService.addMarker(req.body);
+    res.json(marker);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+apiRouter.delete('/markers/:id', async (req, res) => {
+  try {
+    const marker = await MarkerService.deleteMarker(req.params.id);
+    res.json(marker);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
 module.exports = apiRouter;

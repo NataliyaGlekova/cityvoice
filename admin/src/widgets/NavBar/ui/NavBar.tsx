@@ -30,9 +30,9 @@ export default function NavBar(): React.JSX.Element {
         </Navbar.Brand>
 
         {userLogin && (
-          <Nav.Link as={Link} to="/" className="text-warning">
+          <Nav.Link as={Link} to="/places" className="text-warning">
             <FaBook className="me-2" />
-            Edit
+            Управление
           </Nav.Link>
         )}
 
@@ -54,10 +54,10 @@ export default function NavBar(): React.JSX.Element {
                   <FaUser className="me-2" />
                   Вход
                 </Nav.Link>
-                <Nav.Link as={Link} to="/register" className="text-warning">
+                {/* <Nav.Link as={Link} to="/register" className="text-warning">
                   <FaUser className="me-2" />
                   Регистрация
-                </Nav.Link>
+                </Nav.Link> */}
               </>
             )}
           </Nav>
