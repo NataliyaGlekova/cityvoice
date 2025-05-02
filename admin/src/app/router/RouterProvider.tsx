@@ -7,6 +7,7 @@ import { refresh } from "../../entities/user/model/userThunks";
 import LoginPage from "../../pages/Login/LoginPage";
 import ProtectedRoute from "../utils/ProtectedRouter";
 import ErrorPage from "../../pages/ErrorPage/ErrorPage";
+import PlacesPage from "../../pages/PlacesPage/PlacesPage";
 
 export default function RouterProvider(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -21,9 +22,9 @@ export default function RouterProvider(): React.JSX.Element {
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
-          element={<ProtectedRoute isAllowed={!!user} redirectPath="/login" />}
+          element={<ProtectedRoute isAllowed={!!user} redirectPath="/" />}
         >
-          {/* <Route path="/register" element={<RegisterPage />} /> */}
+          <Route path="/places" element={<PlacesPage/>} />
         </Route>
       </Route>
       <Route path="*" element={<ErrorPage />} />

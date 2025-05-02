@@ -22,56 +22,71 @@ export default function PlaceDetails() {
   const [selectedEntity, setSelectedEntity] = useState<EntityT | null>(null);
 
   const renderDescription = (description: string, entities: EntityT[] = []) => {
-    let parts: (string | { text: string; entity: EntityT })[] = [description];
+    if (!description || !entities || entities.length === 0) {
+      return <Text style={styles.description}>{description}</Text>;
+    }
+
+    console.log("Description:", description);
+    console.log("Entities:", entities);
+
     const processedEntities = new Set<string>(); // Отслеживаем обработанные сущности
+    const words = description.split(' '); // Разбиваем текст на слова
+    const parts: (string | { text: string; entity: EntityT })[] = [];
 
-    entities.forEach((entity) => {
-      const newParts: (string | { text: string; entity: EntityT })[] = [];
-      parts.forEach((part) => {
-        if (typeof part === "string") {
-          const splitParts = part.split(entity.name);
-          splitParts.forEach((splitPart, index) => {
-            if (index > 0) {
-              // Если это первое вхождение entity.name
-              if (!processedEntities.has(entity.name)) {
-                newParts.push({ text: entity.name, entity });
-                processedEntities.add(entity.name); // Помечаем как обработанное
-              } else {
-                newParts.push(entity.name); // Второе и последующие вхождения как текст
-              }
-            }
-            if (splitPart) {
-              newParts.push(splitPart);
-            }
-          });
-        } else {
-          newParts.push(part); // Сохраняем уже кликабельные части
+    words.forEach((word, wordIndex) => {
+      let matched = false;
+
+      // Проверяем каждую сущность
+      for (const entity of entities) {
+        if (!entity.name) {
+          console.log("Entity without name:", entity);
+          continue;
         }
-      });
-      parts = newParts;
+
+        // Проверяем, содержит ли слово entity.name (игнорируем регистр)
+        if (
+          word.toLowerCase().includes(entity.name.toLowerCase()) &&
+          !processedEntities.has(entity.name)
+        ) {
+          parts.push({ text: word, entity });
+          processedEntities.add(entity.name);
+          matched = true;
+          break;
+        }
+      }
+
+      if (!matched) {
+        parts.push(word);
+      }
+
+      // Добавляем пробел после слова, если это не последнее слово
+      if (wordIndex < words.length - 1) {
+        parts.push(' ');
+      }
     });
 
-    return parts.map((part, index) => {
-      if (typeof part === "string") {
-        return (
-          <Text key={index} style={styles.description}>
-            {part}
-          </Text>
-        );
-      }
-      return (
-        <Text
-          key={index}
-          style={[styles.description, styles.entityText]}
-          onPress={() => {
-            setSelectedEntity(part.entity);
-            setModalVisible(true);
-          }}
-        >
-          {part.text}
-        </Text>
-      );
-    });
+    // Рендерим все части внутри одного <Text>
+    return (
+      <Text style={styles.description}>
+        {parts.map((part, index) => {
+          if (typeof part === 'string') {
+            return part;
+          }
+          return (
+            <Text
+              key={index}
+              style={styles.entityText}
+              onPress={() => {
+                setSelectedEntity(part.entity);
+                setModalVisible(true);
+              }}
+            >
+              {part.text}
+            </Text>
+          );
+        })}
+      </Text>
+    );
   };
 
   if (!place) {
@@ -209,7 +224,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalButtonText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: "600",
   },
