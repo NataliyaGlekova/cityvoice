@@ -8,6 +8,8 @@ const initialState: PlaceSliceT = {
   activePlace: null,
   isModalVisible: false,
   activePlaces: [],
+  isYamapReady: false,
+  
 };
 
 export const placeSlice = createSlice({
@@ -19,6 +21,9 @@ export const placeSlice = createSlice({
     },
     setIsModalVisible: (state, action) => {
       state.isModalVisible = action.payload;
+    },
+    setIsYamapReady: (state, action) => {
+      state.isYamapReady = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -45,5 +50,5 @@ export const placeSlice = createSlice({
   },
 });
 
-export const { setActivePlace, setIsModalVisible } = placeSlice.actions;
+export const { setActivePlace, setIsModalVisible, setIsYamapReady } = placeSlice.actions;
 export default placeSlice.reducer;
