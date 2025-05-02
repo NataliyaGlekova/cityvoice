@@ -100,6 +100,14 @@ export default function RootLayout() {
                 headerBackTitle: "", // лишним не будет
               }}
             />
+            <Stack.Screen
+              name="/mapActivePlace"
+              options={{
+                title: "Карта",
+                headerBackVisible: true,
+                headerBackTitle: "", // лишним не будет
+              }}
+            />
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>

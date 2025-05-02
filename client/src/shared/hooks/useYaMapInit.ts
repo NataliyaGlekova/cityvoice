@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { AppState } from "react-native";
 import YaMap from "react-native-yamap";
+import { useAppDispatch, useAppSelector } from "./hooks";
+import { setIsYamapReady } from "@/entities/place/model/placeSlice";
 
 export function useYaMapInit() {
-  const [isYamapReady, setYamapReady] = useState(false);
+  const dispatch = useAppDispatch();
+  const isYamapReady = useAppSelector(state => state.markers.isYamapReady);
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (nextAppState === "active") {
@@ -11,7 +14,7 @@ export function useYaMapInit() {
         YaMap.init("021c4811-7a3c-48ec-b5d8-6bd59e8e3823")
           .then(() => {
             console.log("YaMap initialized successfully!");
-            setYamapReady(true); // Сигнал о готовности карты
+            dispatch(setIsYamapReady(true)); // Сигнал о готовности карты
           })
           .catch((error) => {
             console.error("Failed to initialize YaMap:", error);
@@ -20,6 +23,8 @@ export function useYaMapInit() {
     });
 
     return () => {
+      console.log('YaMap initialization cleanup');
+      
       subscription.remove();
     };
   }, []);

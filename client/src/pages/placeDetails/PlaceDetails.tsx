@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   ScrollView,
   Text,
@@ -7,12 +7,14 @@ import {
   View,
   Modal,
   TouchableOpacity,
-} from 'react-native';
-import { useAppSelector } from '@/shared/hooks/hooks';
-import { AudioPlayer } from '../../widget/player/AudioPlayer';
-import { audioMap } from '../../shared/utils/audioMap';
-import { EntityT } from '@/entities/place/model/shema';
-import CommentsWidget from '@/widget/comments-widget/CommentsWidget';
+} from "react-native";
+import { useAppSelector } from "@/shared/hooks/hooks";
+import { AudioPlayer } from "../../widget/player/AudioPlayer";
+import { audioMap } from "../../shared/utils/audioMap";
+import { EntityT } from "@/entities/place/model/shema";
+import CommentsWidget from "@/widget/comments-widget/CommentsWidget";
+import { Button } from "@/shared/ui";
+import { router } from "expo-router";
 
 export default function PlaceDetails() {
   const place = useAppSelector((state) => state.markers.activePlace);
@@ -109,6 +111,7 @@ export default function PlaceDetails() {
         showCard={false}
         place={place}
       />
+      <Button title="Маршрут" onPress={() => router.push("/mapActivePlace")} />
       <CommentsWidget foundPlace={place} />
       <Modal
         animationType="fade"
@@ -121,7 +124,9 @@ export default function PlaceDetails() {
             {selectedEntity ? (
               <>
                 <Text style={styles.modalTitle}>{selectedEntity.name}</Text>
-                <Text style={styles.modalDescription}>{selectedEntity.description}</Text>
+                <Text style={styles.modalDescription}>
+                  {selectedEntity.description}
+                </Text>
                 <TouchableOpacity
                   style={styles.modalButton}
                   onPress={() => setModalVisible(false)}
@@ -142,28 +147,28 @@ export default function PlaceDetails() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 240,
     borderRadius: 12,
     marginBottom: 16,
   },
   title: {
     fontSize: 26,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
-    color: '#333',
+    color: "#333",
   },
   location: {
     fontSize: 16,
-    color: '#888',
+    color: "#888",
     marginBottom: 4,
   },
   rating: {
     fontSize: 18,
-    color: '#FFD700',
+    color: "#FFD700",
     marginBottom: 12,
   },
   descriptionContainer: {
@@ -172,40 +177,40 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     lineHeight: 22,
-    color: '#444',
+    color: "#444",
   },
   entityText: {
-    textDecorationLine: 'underline',
-    color: '#007AFF',
+    textDecorationLine: "underline",
+    color: "#007AFF",
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   errorText: {
     fontSize: 18,
-    color: 'red',
+    color: "red",
     marginBottom: 12,
   },
   modalBackground: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    width: '80%',
-    maxHeight: '80%',
+    width: "80%",
+    maxHeight: "80%",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   modalDescription: {
@@ -213,14 +218,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   modalButton: {
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
     padding: 12,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

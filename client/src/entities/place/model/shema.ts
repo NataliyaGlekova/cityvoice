@@ -19,8 +19,6 @@ export const PlaceSchema = z.object({
   Entities: z.array(EntitySchema).optional(), // Связанные сущности
 });
 
-
-
 export const PlaceArraySchema = PlaceSchema.array();
 
 export type PlaceArrayT = z.infer<typeof PlaceArraySchema>;
@@ -34,4 +32,5 @@ export type PlaceSliceT = {
   activePlace: PlaceT | null;
   isModalVisible: boolean;
   activePlaces: PlaceArrayT;
+  isYamapReady: boolean;
 };
